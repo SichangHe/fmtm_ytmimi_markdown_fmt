@@ -403,10 +403,13 @@ where
         Ok(())
     }
 
-    fn write_indentation_if_needed(&mut self) -> std::fmt::Result {
+    fn write_indentation_if_needed(&mut self) -> Result<bool, std::fmt::Error> {
         match self.rewrite_buffer.chars().last() {
-            Some('\n') | None => self.write_indentation(false),
-            _ => Ok(()),
+            Some('\n') | None => {
+                self.write_indentation(false)?;
+                Ok(true)
+            }
+            _ => Ok(false),
         }
     }
 
@@ -866,7 +869,9 @@ where
                         } */
 
                         self.indentation.push(indentation.into());
-                        self.write_indentation_if_needed()?;
+                        if !self.write_indentation_if_needed()? {
+                            self.write_str(indentation)?;
+                        };
                         None
                     }
                 };
