@@ -90,10 +90,8 @@ mod config;
 mod escape;
 mod external_formatter;
 mod formatter;
-mod html_block;
 mod links;
 pub mod list;
-mod paragraph;
 mod table;
 #[cfg(test)]
 mod test;
@@ -107,9 +105,7 @@ pub use crate::{
     config::Config,
     external_formatter::{
         BufferType, DefaultFormatterCombination, ExternalFormatter, FormatterCombination,
-        FormattingContext,
+        FormattingContext, Paragraph, PreservingBuffer,
     },
-    html_block::PreservingHtmlBlock,
     list::{ListMarker, OrderedListMarker, ParseListMarkerError, UnorderedListMarker},
-    paragraph::Paragraph,
 };
