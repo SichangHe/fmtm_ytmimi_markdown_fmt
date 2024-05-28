@@ -403,6 +403,13 @@ where
         Ok(())
     }
 
+    fn write_indentation_if_needed(&mut self) -> std::fmt::Result {
+        match self.rewrite_buffer.chars().last() {
+            Some('\n') | None => self.write_indentation(false),
+            _ => Ok(()),
+        }
+    }
+
     fn write_reference_link_definition_inner(
         &mut self,
         label: &str,
@@ -564,13 +571,13 @@ where
     /// The main entry point for markdown formatting.
     pub fn format(mut self) -> Result<String, std::fmt::Error> {
         while let Some((event, range)) = self.events.next() {
-            tracing::debug!(?event, ?range);
             let mut last_position = self.input[..range.end]
                 .char_indices()
                 .rev()
                 .find(|(_, char)| !char.is_whitespace())
                 .map(|(index, _)| index)
                 .unwrap_or(0);
+            tracing::debug!(?event, ?range, last_position);
 
             match event {
                 Event::Start(tag) => {
@@ -818,8 +825,8 @@ where
                 let newlines = self.count_newlines(&range);
                 if self.needs_indent && newlines > 0 {
                     self.write_newlines(newlines)?;
-                    self.needs_indent = false;
                 }
+                self.needs_indent = false;
                 let info = match kind {
                     CodeBlockKind::Fenced(info_string) => {
                         rewrite_marker(self.input, &range, self)?;
@@ -859,6 +866,7 @@ where
                         } */
 
                         self.indentation.push(indentation.into());
+                        self.write_indentation_if_needed()?;
                         None
                     }
                 };
@@ -1018,6 +1026,7 @@ where
                 }
             }
             Tag::HtmlBlock => {
+                // TODO: Truly fix this by reordering the events.
                 if matches!(self.peek(), Some(Event::End(TagEnd::Paragraph))) {
                     tracing::debug!("HTML block start before paragraph end.");
                     // NOTE: Pulldown-CMark has a bug where it starts an HTML
@@ -1029,12 +1038,12 @@ where
 
                 let newlines = self.count_newlines(&range);
                 tracing::trace!(newlines);
+                self.flush_external_formatted()?;
                 self.write_newlines(newlines)?;
+                self.write_indentation_if_needed()?;
 
                 self.needs_indent = false;
-                let capacity = range.len() * 2;
-                let width = self.formatter_width();
-                self.external_formatter = Some(E::new(BufferType::HtmlBlock, width, capacity));
+                self.new_external_formatted(BufferType::HtmlBlock, range.len() * 2)?;
             }
             Tag::MetadataBlock(kind) => {
                 self.write_metadata_block_separator(&kind, range)?;
@@ -1103,6 +1112,7 @@ where
                     .external_formatter
                     .as_ref()
                     .is_some_and(|f| f.is_empty());
+                self.flush_external_formatted()?;
 
                 let popped_tag = self.nested_context.pop();
                 let Some(Tag::CodeBlock(kind)) = &popped_tag else {
@@ -1110,7 +1120,6 @@ where
                 };
                 match kind {
                     CodeBlockKind::Fenced(_) => {
-                        self.flush_external_formatted()?;
                         // write closing code fence
                         if !empty_code_block
                             && !matches!(self.rewrite_buffer.chars().last(), Some('\n'))
@@ -1121,11 +1130,6 @@ where
                         rewrite_marker(self.input, &range, self)?;
                     }
                     CodeBlockKind::Indented => {
-                        // Need to write indentation for the first line.
-                        if let Some(external_formatter) = self.external_formatter.take() {
-                            tracing::debug!("Flushing indented code block formatter.");
-                            self.join_with_indentation(&external_formatter.into_buffer(), true)?;
-                        }
                         let popped_indentation = self
                             .indentation
                             .pop()
@@ -1244,6 +1248,7 @@ where
             }
             TagEnd::HtmlBlock => {
                 self.flush_external_formatted()?;
+                self.check_needs_indent(&Event::End(tag));
             }
             TagEnd::MetadataBlock(kind) => {
                 self.write_metadata_block_separator(&kind, range)?;
