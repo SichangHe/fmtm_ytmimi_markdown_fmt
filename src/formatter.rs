@@ -715,8 +715,7 @@ where
                 }
                 self.nested_context.push(tag);
                 let capacity = (range.end - range.start) * 2;
-                let width = self.formatter_width();
-                self.external_formatter = Some(E::new(BufferType::Paragraph, width, capacity));
+                self.new_external_formatted(BufferType::Paragraph, capacity)?;
             }
             Tag::Heading {
                 level, id, classes, ..
@@ -848,11 +847,10 @@ where
                             }
                             Some(info_string)
                         };
-                        self.external_formatter = Some(E::new(
+                        self.new_external_formatted(
                             BufferType::CodeBlock { info },
-                            self.config.max_width,
                             range.len() * 2,
-                        ));
+                        )?;
                     }
                     CodeBlockKind::Indented => {
                         // TODO(ytmimi) support tab as an indent
@@ -1052,7 +1050,7 @@ where
             TagEnd::Paragraph => {
                 let popped_tag = self.nested_context.pop();
                 debug_assert_eq!(popped_tag, Some(Tag::Paragraph));
-                self.write_external_formatted()?;
+                self.flush_external_formatted()?;
             }
             TagEnd::Heading(_) => {
                 let (fragment_identifier, classes) = self
@@ -1107,7 +1105,7 @@ where
                     .external_formatter
                     .as_ref()
                     .is_some_and(|f| f.is_empty());
-                self.write_external_formatted()?;
+                self.flush_external_formatted()?;
 
                 let popped_tag = self.nested_context.pop();
                 let Some(Tag::CodeBlock(kind)) = &popped_tag else {
@@ -1242,7 +1240,7 @@ where
                 }
             }
             TagEnd::HtmlBlock => {
-                self.write_external_formatted()?;
+                self.flush_external_formatted()?;
             }
             TagEnd::MetadataBlock(kind) => {
                 self.write_metadata_block_separator(&kind, range)?;
@@ -1251,8 +1249,19 @@ where
         Ok(())
     }
 
-    fn write_external_formatted(&mut self) -> std::fmt::Result {
+    fn new_external_formatted(
+        &mut self,
+        buffer_type: BufferType,
+        capacity: usize,
+    ) -> std::fmt::Result {
+        self.flush_external_formatted()?;
+        self.external_formatter = Some(E::new(buffer_type, self.formatter_width(), capacity));
+        Ok(())
+    }
+
+    fn flush_external_formatted(&mut self) -> std::fmt::Result {
         if let Some(external_formatter) = self.external_formatter.take() {
+            tracing::debug!("Flushing external formatter.");
             self.join_with_indentation(&external_formatter.into_buffer(), false)?;
         }
         Ok(())
