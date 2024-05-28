@@ -2,7 +2,7 @@ use super::*;
 
 mod default;
 
-pub use default::{DefaultFormatterCombination, PreservingBuffer, Paragraph};
+pub use default::{DefaultFormatterCombination, Paragraph, PreservingBuffer, TrimStartBuffer};
 
 /// A formatter buffer we write non-Markdown string into.
 pub trait ExternalFormatter: Write {

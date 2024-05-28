@@ -105,7 +105,7 @@ pub use crate::{
     config::Config,
     external_formatter::{
         BufferType, DefaultFormatterCombination, ExternalFormatter, FormatterCombination,
-        FormattingContext, Paragraph, PreservingBuffer,
+        FormattingContext, Paragraph, PreservingBuffer, TrimStartBuffer,
     },
     list::{ListMarker, OrderedListMarker, ParseListMarkerError, UnorderedListMarker},
 };

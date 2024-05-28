@@ -3,7 +3,7 @@ use super::*;
 /// A default [`ExternalFormatter`].
 /// Preserve code blocks and HTML blocks as is, and line-wrap paragraphs.
 pub type DefaultFormatterCombination =
-    FormatterCombination<PreservingBuffer, PreservingBuffer, Paragraph>;
+    FormatterCombination<PreservingBuffer, TrimStartBuffer, Paragraph>;
 
 /// A buffer where we write HTML blocks. Preserves everything as is.
 pub struct PreservingBuffer {
@@ -125,5 +125,47 @@ impl ExternalFormatter for Paragraph {
         }
 
         output_buffer
+    }
+}
+
+/// A buffer that trims each line's leading spaces.
+pub struct TrimStartBuffer {
+    buffer: String,
+    context: FormattingContext,
+}
+
+impl Write for TrimStartBuffer {
+    fn write_str(&mut self, s: &str) -> std::fmt::Result {
+        let s = match self.buffer.chars().last() {
+            Some('\n') | None => s.trim_start_matches(' '),
+            _ => s,
+        };
+        self.buffer.push_str(s);
+        Ok(())
+    }
+}
+
+impl ExternalFormatter for TrimStartBuffer {
+    fn new(buffer_type: BufferType, _max_width: Option<usize>, capacity: usize) -> Self {
+        Self {
+            buffer: String::with_capacity(capacity),
+            context: match buffer_type {
+                BufferType::CodeBlock { .. } => FormattingContext::CodeBlock,
+                BufferType::HtmlBlock => FormattingContext::HtmlBlock,
+                BufferType::Paragraph => FormattingContext::Paragraph,
+            },
+        }
+    }
+
+    fn is_empty(&self) -> bool {
+        self.buffer.is_empty()
+    }
+
+    fn context(&self) -> FormattingContext {
+        self.context
+    }
+
+    fn into_buffer(self) -> String {
+        self.buffer
     }
 }
