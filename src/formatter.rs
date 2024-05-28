@@ -2,52 +2,22 @@ use pulldown_cmark::MetadataBlockKind;
 
 use super::*;
 
-/// Used to format Markdown inputs.
-///
-/// To get a [MarkdownFormatter] use [FormatterBuilder::build]
-///
-/// [FormatterBuilder::build]: crate::FormatterBuilder::build
-pub struct MarkdownFormatter {
-    code_block_formatter: CodeBlockFormatter,
-    config: Config,
-}
+mod format;
 
-impl MarkdownFormatter {
+impl<E> MarkdownFormatter<E>
+where
+    E: ExternalFormatter,
+{
     /// Format Markdown input
     ///
     /// ```rust
-    /// # use fmtm_ytmimi_markdown_fmt::FormatterBuilder;
-    /// let builder = FormatterBuilder::default();
-    /// let formatter = builder.build();
+    /// # use fmtm_ytmimi_markdown_fmt::MarkdownFormatter;
+    /// let formatter = MarkdownFormatter::default();
     /// let input = "   #  Header! ";
     /// let rewrite = formatter.format(input).unwrap();
     /// assert_eq!(rewrite, String::from("# Header!"));
     /// ```
     pub fn format(self, input: &str) -> Result<String, std::fmt::Error> {
-        self.format_with_paragraph_and_html_block_formatter::<Paragraph, PreservingHtmlBlock>(input)
-    }
-
-    /// Format Markdown input with the given [`ParagraphFormatter`] `P` to
-    /// format paragraphs, and `H` to format HTML blocks.
-    ///
-    /// ```rust
-    /// # use fmtm_ytmimi_markdown_fmt::{FormatterBuilder, Paragraph, PreservingHtmlBlock};
-    /// let builder = FormatterBuilder::default();
-    /// let formatter = builder.build();
-    /// let input = "   #  Header! ";
-    /// let rewrite = formatter
-    ///     .format_with_paragraph_and_html_block_formatter::<Paragraph, PreservingHtmlBlock>(input)
-    ///     .unwrap();
-    /// assert_eq!(rewrite, String::from("# Header!"));
-    /// ```
-    pub fn format_with_paragraph_and_html_block_formatter<P, H>(
-        self,
-        input: &str,
-    ) -> Result<String, std::fmt::Error>
-    where
-        P: ParagraphFormatter,
-        H: ParagraphFormatter,
-    {
         // callback that will always revcover broken links
         let mut callback = |broken_link| {
             tracing::trace!("found boken link: {broken_link:?}");
@@ -118,36 +88,17 @@ impl MarkdownFormatter {
 
         let iter = parser.into_offset_iter().all_loose_lists();
 
-        let fmt_state = <FormatState<_, _, P, H>>::new_with_paragraph_and_html_block_formatter(
-            input,
-            self.config,
-            self.code_block_formatter,
-            iter,
-            reference_links,
-        );
+        let fmt_state = <FormatState<E, _>>::new(input, self.config, iter, reference_links);
         fmt_state.format()
-    }
-
-    /// Helper method to easily initiazlie the [MarkdownFormatter].
-    ///
-    /// This is marked as `pub(crate)` because users are expected to use the [FormatterBuilder]
-    /// When creating a [MarkdownFormatter].
-    ///
-    /// [FormatterBuilder]: crate::FormatterBuilder
-    pub(crate) fn new(code_block_formatter: CodeBlockFormatter, config: Config) -> Self {
-        Self {
-            code_block_formatter,
-            config,
-        }
     }
 }
 
 type ReferenceLinkDefinition = (String, String, Option<(String, char)>, Range<usize>);
 
-// TODO: Merge all this formatter madness into a single trait.
-pub(crate) struct FormatState<'i, F, I, P, H>
+pub(crate) struct FormatState<'i, E, I>
 where
-    I: Iterator,
+    E: ExternalFormatter,
+    I: Iterator<Item = (Event<'i>, std::ops::Range<usize>)>,
 {
     /// Raw markdown input
     input: &'i str,
@@ -155,8 +106,8 @@ where
     /// Iterator Supplying Markdown Events
     events: Peekable<I>,
     rewrite_buffer: String,
-    /// Stores code that we might try to format
-    code_block_buffer: String,
+    /// Handles code block, HTML block, and paragraph formatting.
+    external_formatter: Option<E>,
     /// Stack that keeps track of nested list markers.
     /// Unordered list markers are one of `*`, `+`, or `-`,
     /// while ordered lists markers start with 0-9 digits followed by a `.` or `)`.
@@ -187,13 +138,10 @@ where
     needs_indent: bool,
     table_state: Option<TableState<'i>>,
     last_position: usize,
-    code_block_formatter: F,
     trim_link_or_image_start: bool,
-    /// Handles paragraph formatting.
-    paragraph: Option<P>,
-    /// Handles HTML block formatting.
-    html_block: Option<H>,
     /// Force write into rewrite buffer.
+    // TODO: Remove this after making an adapter to solve the stupid
+    // out-of-order problem.
     force_rewrite_buffer: bool,
     /// Format configurations
     config: Config,
@@ -201,11 +149,10 @@ where
 
 /// Depnding on the formatting context there are a few different buffers where we might want to
 /// write formatted markdown events. The Write impl helps us centralize this logic.
-impl<'i, F, I, P, H> Write for FormatState<'i, F, I, P, H>
+impl<'i, E, I> Write for FormatState<'i, E, I>
 where
     I: Iterator<Item = (Event<'i>, std::ops::Range<usize>)>,
-    P: ParagraphFormatter,
-    H: ParagraphFormatter,
+    E: ExternalFormatter,
 {
     fn write_str(&mut self, text: &str) -> std::fmt::Result {
         if let Some(writer) = self.current_buffer() {
@@ -223,11 +170,10 @@ where
     }
 }
 
-impl<'i, F, I, P, H> FormatState<'i, F, I, P, H>
+impl<'i, E, I> FormatState<'i, E, I>
 where
+    E: ExternalFormatter,
     I: Iterator<Item = (Event<'i>, std::ops::Range<usize>)>,
-    P: ParagraphFormatter,
-    H: ParagraphFormatter,
 {
     /// Peek at the next Markdown Event
     fn peek(&mut self) -> Option<&Event<'i>> {
@@ -272,7 +218,7 @@ where
 
     /// Check if we're in an HTML block.
     fn in_html_block(&self) -> bool {
-        self.html_block.is_some()
+        Some(FormattingContext::HtmlBlock) == self.external_formatter.as_ref().map(|f| f.context())
     }
 
     // check if we're formatting a table header
@@ -302,7 +248,7 @@ where
     /// Check if we're in a "paragraph". A `Paragraph` might not necessarily be on the
     /// nested_context stack.
     fn in_paragraph(&self) -> bool {
-        self.paragraph.is_some()
+        Some(FormattingContext::Paragraph) == self.external_formatter.as_ref().map(|f| f.context())
     }
 
     /// Check if we're formatting in a nested context
@@ -324,10 +270,12 @@ where
             Some(&mut self.rewrite_buffer)
         } else if self.in_fenced_code_block() || self.in_indented_code_block() {
             tracing::trace!("code_block_buffer");
-            Some(&mut self.code_block_buffer)
+            self.external_formatter
+                .as_mut()
+                .map(|f| f as &mut dyn std::fmt::Write)
         } else if self.in_html_block() {
             tracing::trace!("html_block");
-            self.html_block
+            self.external_formatter
                 .as_mut()
                 .map(|h| h as &mut dyn std::fmt::Write)
         } else if self.in_table_header() || self.in_table_row() {
@@ -337,7 +285,7 @@ where
                 .map(|s| s as &mut dyn std::fmt::Write)
         } else if self.in_paragraph() {
             tracing::trace!("paragraph");
-            self.paragraph
+            self.external_formatter
                 .as_mut()
                 .map(|p| p as &mut dyn std::fmt::Write)
         } else {
@@ -348,14 +296,16 @@ where
 
     /// Check if the current buffer we're writting to is empty
     fn is_current_buffer_empty(&self) -> bool {
-        if self.in_fenced_code_block() || self.in_indented_code_block() {
-            self.code_block_buffer.is_empty()
-        } else if self.in_html_block() {
-            self.html_block.as_ref().is_some_and(|h| h.is_empty())
+        if self.in_fenced_code_block() || self.in_indented_code_block() || self.in_html_block() {
+            self.external_formatter
+                .as_ref()
+                .is_some_and(ExternalFormatter::is_empty)
         } else if self.in_table_header() || self.in_table_row() {
             self.table_state.as_ref().is_some_and(|s| s.is_empty())
         } else if self.in_paragraph() {
-            self.paragraph.as_ref().is_some_and(|p| p.is_empty())
+            self.external_formatter
+                .as_ref()
+                .is_some_and(ExternalFormatter::is_empty)
         } else {
             self.rewrite_buffer.is_empty()
         }
@@ -552,47 +502,14 @@ where
     }
 }
 
-impl<'i, F, I, P, H> FormatState<'i, F, I, P, H>
+impl<'i, E, I> FormatState<'i, E, I>
 where
     I: Iterator<Item = (Event<'i>, std::ops::Range<usize>)>,
-    P: ParagraphFormatter,
-{
-}
-
-#[allow(dead_code)] // For testing.
-impl<'i, F, I> FormatState<'i, F, I, Paragraph, PreservingHtmlBlock>
-where
-    F: Fn(&str, String) -> String,
-    I: Iterator<Item = (Event<'i>, std::ops::Range<usize>)>,
+    E: ExternalFormatter,
 {
     pub(crate) fn new(
         input: &'i str,
         config: Config,
-        code_block_formatter: F,
-        iter: I,
-        reference_links: Vec<ReferenceLinkDefinition>,
-    ) -> Self {
-        Self::new_with_paragraph_and_html_block_formatter(
-            input,
-            config,
-            code_block_formatter,
-            iter,
-            reference_links,
-        )
-    }
-}
-
-impl<'i, F, I, P, H> FormatState<'i, F, I, P, H>
-where
-    F: Fn(&str, String) -> String,
-    I: Iterator<Item = (Event<'i>, std::ops::Range<usize>)>,
-    P: ParagraphFormatter,
-    H: ParagraphFormatter,
-{
-    pub(crate) fn new_with_paragraph_and_html_block_formatter(
-        input: &'i str,
-        config: Config,
-        code_block_formatter: F,
         iter: I,
         reference_links: Vec<ReferenceLinkDefinition>,
     ) -> Self {
@@ -601,7 +518,7 @@ where
             last_was_softbreak: false,
             events: iter.peekable(),
             rewrite_buffer: String::with_capacity(input.len() * 2),
-            code_block_buffer: String::with_capacity(256),
+            external_formatter: None,
             // TODO(ytmimi) Add a configuration to allow incrementing ordered lists
             // list_markers: vec![],
             indentation: vec![],
@@ -612,29 +529,14 @@ where
             needs_indent: false,
             table_state: None,
             last_position: 0,
-            code_block_formatter,
             trim_link_or_image_start: false,
-            paragraph: None,
-            html_block: None,
             force_rewrite_buffer: false,
             config,
         }
     }
 
-    fn format_code_buffer(&mut self, info_string: Option<&str>) -> String {
-        // use std::mem::take to work around the borrow checker
-        let code_block_buffer = std::mem::take(&mut self.code_block_buffer);
-
-        let Some(info_string) = info_string else {
-            // An indented code block won't have an info_string
-            return code_block_buffer;
-        };
-
-        // Call the code_block_formatter fn
-        (self.code_block_formatter)(info_string, code_block_buffer)
-    }
-
-    fn write_code_block_buffer(&mut self, info_string: Option<&str>) -> std::fmt::Result {
+    /* fn write_code_block_buffer(&mut self, info: Option<&str>) -> std::fmt::Result {
+        let code_block = E::new(BufferType::CodeBlock { info }, self.config.max_width, );
         let code = self.format_code_buffer(info_string);
 
         if code.trim().is_empty() && info_string.is_some() {
@@ -651,7 +553,7 @@ where
         }
 
         Ok(())
-    }
+    } */
 
     fn formatter_width(&self) -> Option<usize> {
         self.config
@@ -682,44 +584,53 @@ where
                 }
                 // TODO: Format display math with its own buffer.
                 Event::Text(ref parsed_text) | Event::DisplayMath(ref parsed_text) => {
-                    last_position = range.end;
-                    let starts_with_escape = self.input[..range.start].ends_with('\\');
-                    let newlines = self.count_newlines(&range);
-                    let text_from_source = &self.input[range];
-                    let mut text = if text_from_source.is_empty() && !self.in_html_block() {
-                        // This seems to happen when the parsed text is whitespace only.
-                        // To preserve leading whitespace outside of HTML blocks,
-                        // use the parsed text instead.
-                        parsed_text.as_ref()
+                    if self
+                        .external_formatter
+                        .as_ref()
+                        .is_some_and(|f| f.context() != FormattingContext::Paragraph)
+                    {
+                        // External formatting. Write the text as is.
+                        self.write_str(parsed_text)?;
                     } else {
-                        text_from_source
-                    };
+                        last_position = range.end;
+                        let starts_with_escape = self.input[..range.start].ends_with('\\');
+                        let newlines = self.count_newlines(&range);
+                        let text_from_source = &self.input[range];
+                        let mut text = if text_from_source.is_empty() {
+                            // This seems to happen when the parsed text is whitespace only.
+                            // To preserve leading whitespace outside of HTML blocks,
+                            // use the parsed text instead.
+                            parsed_text.as_ref()
+                        } else {
+                            text_from_source
+                        };
 
-                    if self.in_link_or_image() && self.trim_link_or_image_start {
-                        // Trim leading whitespace from reference links or images
-                        text = text.trim_start();
-                        // Make sure we only trim leading whitespace once
-                        self.trim_link_or_image_start = false
-                    }
+                        if self.in_link_or_image() && self.trim_link_or_image_start {
+                            // Trim leading whitespace from reference links or images
+                            text = text.trim_start();
+                            // Make sure we only trim leading whitespace once
+                            self.trim_link_or_image_start = false
+                        }
 
-                    if matches!(
-                        self.peek(),
-                        Some(Event::End(TagEnd::Link { .. } | TagEnd::Image { .. }))
-                    ) {
-                        text = text.trim_end();
-                    }
+                        if matches!(
+                            self.peek(),
+                            Some(Event::End(TagEnd::Link { .. } | TagEnd::Image { .. }))
+                        ) {
+                            text = text.trim_end();
+                        }
 
-                    if self.needs_indent {
-                        self.write_newlines(newlines)?;
-                    }
+                        if self.needs_indent {
+                            self.write_newlines(newlines)?;
+                        }
 
-                    if starts_with_escape || self.needs_escape(text) {
-                        // recover escape characters
-                        write!(self, "\\{text}")?;
-                    } else {
-                        write!(self, "{text}")?;
+                        if starts_with_escape || self.needs_escape(text) {
+                            // recover escape characters
+                            write!(self, "\\{text}")?;
+                        } else {
+                            write!(self, "{text}")?;
+                        }
+                        self.check_needs_indent(&event);
                     }
-                    self.check_needs_indent(&event);
                 }
                 Event::Code(_) => {
                     write!(self, "{}", &self.input[range])?;
@@ -805,7 +716,7 @@ where
                 self.nested_context.push(tag);
                 let capacity = (range.end - range.start) * 2;
                 let width = self.formatter_width();
-                self.paragraph = Some(P::new(width, capacity));
+                self.external_formatter = Some(E::new(BufferType::Paragraph, width, capacity));
             }
             Tag::Heading {
                 level, id, classes, ..
@@ -914,37 +825,44 @@ where
                     CodeBlockKind::Fenced(info_string) => {
                         rewrite_marker(self.input, &range, self)?;
 
-                        if info_string.is_empty() {
+                        let info = if info_string.is_empty() {
                             writeln!(self)?;
-                            self.nested_context.push(tag);
-                            return Ok(());
-                        }
-
-                        let starts_with_space = self.input[range.clone()]
-                            .trim_start_matches(['`', '~'])
-                            .starts_with(char::is_whitespace);
-
-                        let info_string = self.input[range]
-                            .lines()
-                            .next()
-                            .unwrap_or_else(|| info_string.as_ref())
-                            .trim_start_matches(['`', '~'])
-                            .trim();
-
-                        if starts_with_space {
-                            writeln!(self, " {info_string}")?;
+                            None
                         } else {
-                            writeln!(self, "{info_string}")?;
-                        }
+                            let exclude_fence =
+                                self.input[range.clone()].trim_start_matches(['`', '~']);
+                            let starts_with_space = exclude_fence
+                                .trim_start_matches(['`', '~'])
+                                .starts_with(char::is_whitespace);
+
+                            let info_string = exclude_fence
+                                .lines()
+                                .next()
+                                .unwrap_or_else(|| info_string.as_ref())
+                                .trim();
+
+                            if starts_with_space {
+                                writeln!(self, " {info_string}")?;
+                            } else {
+                                writeln!(self, "{info_string}")?;
+                            }
+                            Some(info_string)
+                        };
+                        self.external_formatter = Some(E::new(
+                            BufferType::CodeBlock { info },
+                            self.config.max_width,
+                            range.len() * 2,
+                        ));
                     }
                     CodeBlockKind::Indented => {
                         // TODO(ytmimi) support tab as an indent
                         let indentation = "    ";
 
-                        if !matches!(self.peek(), Some(Event::End(TagEnd::CodeBlock))) {
+                        // TODO: Check if this is really needed.
+                        /* if !matches!(self.peek(), Some(Event::End(TagEnd::CodeBlock))) {
                             // Only write indentation if this isn't an empty indented code block
                             self.write_str(indentation)?;
-                        }
+                        } */
 
                         self.indentation.push(indentation.into());
                     }
@@ -1113,15 +1031,14 @@ where
                     self.end_tag(TagEnd::Paragraph, range)?;
                 }
 
-                let capacity = (range.end - range.start) * 2;
-                let width = self.formatter_width();
-                let mut html_block = H::new(width, capacity);
                 let newlines = self.count_newlines(&range);
                 tracing::trace!(newlines);
-                for _ in 0..newlines {
-                    html_block.write_char('\n')?;
-                }
-                self.html_block = Some(html_block);
+                self.write_newlines(newlines)?;
+
+                self.needs_indent = false;
+                let capacity = range.len() * 2;
+                let width = self.formatter_width();
+                self.external_formatter = Some(E::new(BufferType::HtmlBlock, width, capacity));
             }
             Tag::MetadataBlock(kind) => {
                 self.write_metadata_block_separator(&kind, range)?;
@@ -1135,10 +1052,7 @@ where
             TagEnd::Paragraph => {
                 let popped_tag = self.nested_context.pop();
                 debug_assert_eq!(popped_tag, Some(Tag::Paragraph));
-
-                if let Some(p) = self.paragraph.take() {
-                    self.join_with_indentation(&p.into_buffer(), false)?;
-                }
+                self.write_external_formatted()?;
             }
             TagEnd::Heading(_) => {
                 let (fragment_identifier, classes) = self
@@ -1189,22 +1103,28 @@ where
                 }
             }
             TagEnd::CodeBlock => {
+                let empty_code_block = self
+                    .external_formatter
+                    .as_ref()
+                    .is_some_and(|f| f.is_empty());
+                self.write_external_formatted()?;
+
                 let popped_tag = self.nested_context.pop();
                 let Some(Tag::CodeBlock(kind)) = &popped_tag else {
                     unreachable!("Should have pushed a code block start tag");
                 };
-
                 match kind {
-                    CodeBlockKind::Fenced(info_string) => {
-                        self.write_code_block_buffer(Some(info_string))?;
+                    CodeBlockKind::Fenced(_) => {
                         // write closing code fence
+                        if !empty_code_block
+                            && !matches!(self.rewrite_buffer.chars().last(), Some('\n'))
+                        {
+                            writeln!(self)?;
+                        }
                         self.write_indentation(false)?;
                         rewrite_marker(self.input, &range, self)?;
                     }
                     CodeBlockKind::Indented => {
-                        // Maybe we'll consider formatting indented code blocks??
-                        self.write_code_block_buffer(None)?;
-
                         let popped_indentation = self
                             .indentation
                             .pop()
@@ -1322,15 +1242,18 @@ where
                 }
             }
             TagEnd::HtmlBlock => {
-                let newlines = self.count_newlines(&range);
-                self.write_newlines(newlines)?;
-                if let Some(h) = self.html_block.take() {
-                    self.join_with_indentation(&h.into_buffer(), false)?;
-                }
+                self.write_external_formatted()?;
             }
             TagEnd::MetadataBlock(kind) => {
                 self.write_metadata_block_separator(&kind, range)?;
             }
+        }
+        Ok(())
+    }
+
+    fn write_external_formatted(&mut self) -> std::fmt::Result {
+        if let Some(external_formatter) = self.external_formatter.take() {
+            self.join_with_indentation(&external_formatter.into_buffer(), false)?;
         }
         Ok(())
     }

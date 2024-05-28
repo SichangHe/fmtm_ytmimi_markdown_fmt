@@ -1,10 +1,9 @@
 use super::*;
 
-impl<'i, F, I, P, H> FormatState<'i, F, I, P, H>
+impl<'i, E, I> FormatState<'i, E, I>
 where
+    E: ExternalFormatter,
     I: Iterator<Item = (Event<'i>, std::ops::Range<usize>)>,
-    P: ParagraphFormatter,
-    H: ParagraphFormatter,
 {
     pub(super) fn write_inline_link<S: AsRef<str>>(
         &mut self,

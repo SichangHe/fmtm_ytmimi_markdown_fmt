@@ -2,19 +2,6 @@ use super::*;
 
 const MARKDOWN_HARD_BREAK: &str = "  \n";
 
-/// A formatter buffer we write paragraph text into.
-pub trait ParagraphFormatter: Write {
-    /// Make a new instance based on the given maximum width and buffer
-    /// capacity.
-    fn new(max_width: Option<usize>, capacity: usize) -> Self;
-
-    /// Check if the internal buffer is empty.
-    fn is_empty(&self) -> bool;
-
-    /// Consume Self and return the formatted buffer.
-    fn into_buffer(self) -> String;
-}
-
 /// A buffer where we write text
 pub struct Paragraph {
     buffer: String,
@@ -45,8 +32,8 @@ impl Write for Paragraph {
     }
 }
 
-impl ParagraphFormatter for Paragraph {
-    fn new(max_width: Option<usize>, capacity: usize) -> Self {
+impl ExternalFormatter for Paragraph {
+    fn new(_: BufferType, max_width: Option<usize>, capacity: usize) -> Self {
         Self {
             max_width,
             buffer: String::with_capacity(capacity),
@@ -55,6 +42,10 @@ impl ParagraphFormatter for Paragraph {
 
     fn is_empty(&self) -> bool {
         self.buffer.is_empty()
+    }
+
+    fn context(&self) -> FormattingContext {
+        FormattingContext::Paragraph
     }
 
     fn into_buffer(mut self) -> String {

@@ -1,23 +1,32 @@
+use std::marker::PhantomData;
+
 use super::*;
 
-pub(crate) type CodeBlockFormatter = Box<dyn Fn(&str, String) -> String>;
-
-/// Builder for the [MarkdownFormatter](crate::MarkdownFormatter)
-pub struct FormatterBuilder {
-    code_block_formatter: CodeBlockFormatter,
-    config: Config,
+/// Used to format Markdown inputs.
+///
+/// Parameter `E` should be an [`ExternalFormatter`] to configure code block,
+/// HTML block, and paragraph formatting;
+/// default to [`DefaultFormatterCombination`],
+/// and partial customization can easily be done using [`FormatterCombination`].
+#[derive(Clone)]
+pub struct MarkdownFormatter<E>
+where
+    E: ExternalFormatter,
+{
+    pub(crate) _external_formatter: PhantomData<fn() -> E>,
+    pub(crate) config: Config,
 }
 
-impl FormatterBuilder {
-    /// Create a [FormatterBuilder] with custom [`Config`].
+impl MarkdownFormatter<DefaultFormatterCombination> {
+    /// Create a [`MarkdownFormatter`] with custom [`Config`] and
+    /// default [`ExternalFormatter`].
     ///
     /// ```rust
-    /// # use fmtm_ytmimi_markdown_fmt::{Config, FormatterBuilder};
-    /// let builder = FormatterBuilder::with_config(Config {
+    /// # use fmtm_ytmimi_markdown_fmt::{Config, MarkdownFormatter};
+    /// let formatter = MarkdownFormatter::with_config(Config {
     ///     max_width: Some(80),
     ///     ..Default::default()
     /// });
-    /// let formatter = builder.build();
     /// ```
     pub fn with_config(config: Config) -> Self {
         Self {
@@ -25,61 +34,31 @@ impl FormatterBuilder {
             ..Default::default()
         }
     }
+}
 
-    /// Create a [FormatterBuilder] with a custom code block formatter.
-    ///
-    /// The closure used to reformat code blocks takes two arguments;
-    /// the [`info string`] and the complete code snippet
+impl<E> MarkdownFormatter<E>
+where
+    E: ExternalFormatter,
+{
+    /// Create a [`MarkdownFormatter`] with custom [`Config`] and
+    /// custom [`ExternalFormatter`].
     ///
     /// ```rust
-    /// # use fmtm_ytmimi_markdown_fmt::MarkdownFormatter;
-    /// # use fmtm_ytmimi_markdown_fmt::FormatterBuilder;
-    /// let builder = FormatterBuilder::with_code_block_formatter(|info_string, code_block| {
-    ///     // Set the code block formatting logic
-    ///     match info_string.to_lowercase().as_str() {
-    ///         "rust" => {
-    ///             // format rust code
-    ///             # code_block
-    ///         }
-    ///         _ => code_block,
+    /// # use fmtm_ytmimi_markdown_fmt::{
+    ///     Config, DefaultFormatterCombination, MarkdownFormatter,
+    /// };
+    /// let formatter = <MarkdownFormatter<DefaultFormatterCombination>>::with_config(
+    ///     Config {
+    ///         max_width: Some(80),
+    ///         ..Default::default()
     ///     }
-    /// });
-    /// let formatter = builder.build();
+    /// );
     /// ```
-    /// [`info string`]: https://spec.commonmark.org/0.31.2/#fenced-code-blocks
-    pub fn with_code_block_formatter<F>(formatter: F) -> Self
-    where
-        F: Fn(&str, String) -> String + 'static,
-    {
-        let mut builder = Self::default();
-        builder.code_block_formatter(formatter);
-        builder
-    }
-
-    /// Build a [MarkdownFormatter](crate::MarkdownFormatter)
-    ///
-    /// ```rust
-    /// # use fmtm_ytmimi_markdown_fmt::MarkdownFormatter;
-    /// # use fmtm_ytmimi_markdown_fmt::FormatterBuilder;
-    /// let builder = FormatterBuilder::default();
-    /// let formatter: MarkdownFormatter = builder.build();
-    /// ```
-    pub fn build(self) -> crate::MarkdownFormatter {
-        crate::MarkdownFormatter::new(self.code_block_formatter, self.config)
-    }
-
-    /// Configure how code blocks should be reformatted after creating the [FormatterBuilder].
-    ///
-    /// The closure passed to `code_block_formatter` takes two arguments;
-    /// the [`info string`] and the complete code snippet
-    ///
-    /// [`info string`]: https://spec.commonmark.org/0.31.2/#fenced-code-blocks
-    pub fn code_block_formatter<F>(&mut self, formatter: F) -> &mut Self
-    where
-        F: Fn(&str, String) -> String + 'static,
-    {
-        self.code_block_formatter = Box::new(formatter);
-        self
+    pub fn with_config_and_external_formatter(config: Config) -> Self {
+        Self {
+            _external_formatter: Default::default(),
+            config,
+        }
     }
 
     /// Configure the max with when rewriting paragraphs.
@@ -95,32 +74,23 @@ impl FormatterBuilder {
         self.config = Config::sichanghe_opinion();
         self
     }
-
-    /// Internal setter for Config. Used for testing
-    #[cfg(test)]
-    pub(crate) fn config(&mut self, config: Config) -> &mut Self {
-        self.config = config;
-        self
-    }
 }
 
-impl std::fmt::Debug for FormatterBuilder {
+impl<E> std::fmt::Debug for MarkdownFormatter<E>
+where
+    E: ExternalFormatter,
+{
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.debug_struct("FormatterBuilder")
+        f.debug_struct("MarkdownFormatter")
             .field("config", &self.config)
             .finish()
     }
 }
 
-/// Default formatter which leaves code blocks unformatted
-fn default_code_block_formatter(_info_str: &str, code_block: String) -> String {
-    code_block
-}
-
-impl Default for FormatterBuilder {
+impl Default for MarkdownFormatter<DefaultFormatterCombination> {
     fn default() -> Self {
-        FormatterBuilder {
-            code_block_formatter: Box::new(default_code_block_formatter),
+        MarkdownFormatter {
+            _external_formatter: Default::default(),
             config: Config::default(),
         }
     }

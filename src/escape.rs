@@ -2,9 +2,10 @@ use super::*;
 
 const ATX_HEADER_ESCAPES: [&str; 6] = ["# ", "## ", "### ", "#### ", "##### ", "###### "];
 
-impl<'i, F, I, P, H> FormatState<'i, F, I, P, H>
+impl<'i, E, I> FormatState<'i, E, I>
 where
-    I: Iterator,
+    E: ExternalFormatter,
+    I: Iterator<Item = (Event<'i>, std::ops::Range<usize>)>,
 {
     pub(super) fn needs_escape(&mut self, input: &str) -> bool {
         if !self.last_was_softbreak {

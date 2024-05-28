@@ -8,7 +8,7 @@ use rust_search::SearchBuilder;
 
 use super::*;
 
-impl FormatterBuilder {
+impl MarkdownFormatter<DefaultFormatterCombination> {
     pub fn from_leading_config_comments(input: &str) -> Self {
         let mut config = Config {
             max_width: None,
@@ -30,9 +30,7 @@ impl FormatterBuilder {
             config.set(config_option, value.trim());
         }
 
-        let mut builder = FormatterBuilder::default();
-        builder.config(config);
-        builder
+        MarkdownFormatter::with_config(config)
     }
 }
 
@@ -59,7 +57,9 @@ fn main() {}
     there!
     ]: htts://example.com "Yoooo"
 "##;
-    let rewrite = rewrite_markdown_sichanghe_opinion(input).unwrap();
+    let mut formatter = MarkdownFormatter::default();
+    formatter.sichanghe_config();
+    let rewrite = formatter.format(input).unwrap();
     assert_snapshot!(rewrite)
 }
 
@@ -69,7 +69,9 @@ fn reformat_emoji() {
     let input = "Congratulations, that's really good news 🙂
 
 I have a couple of good firends there.";
-    let rewrite = rewrite_markdown_sichanghe_opinion(input).unwrap();
+    let mut formatter = MarkdownFormatter::default();
+    formatter.sichanghe_config();
+    let rewrite = formatter.format(input).unwrap();
     assert_snapshot!(rewrite)
 }
 
@@ -89,8 +91,9 @@ fn check_markdown_formatting() {
     init_tracing();
     glob!("source/*.md", |path| {
         let input = fs::read_to_string(path).unwrap();
-        let builder = FormatterBuilder::from_leading_config_comments(&input);
-        let formatted_input = rewrite_markdown_with_builder(&input, builder).unwrap();
+        let formatted_input = MarkdownFormatter::from_leading_config_comments(&input)
+            .format(&input)
+            .unwrap();
         let mut settings = Settings::clone_current();
         settings.set_prepend_module_to_snapshot(false);
         settings.remove_description();
@@ -113,8 +116,9 @@ fn idempotence_test() {
             .skip(4)
             .collect::<Vec<_>>()
             .join("\n");
-        let builder = FormatterBuilder::from_leading_config_comments(&input);
-        let formatted_input = rewrite_markdown_with_builder(&input, builder).unwrap();
+        let formatted_input = MarkdownFormatter::from_leading_config_comments(&input)
+            .format(&input)
+            .unwrap();
         if formatted_input != input {
             panic!(
                 "Idemponency failed for `{}`:
