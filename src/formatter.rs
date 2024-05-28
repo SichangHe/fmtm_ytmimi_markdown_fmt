@@ -820,11 +820,11 @@ where
                     self.write_newlines(newlines)?;
                     self.needs_indent = false;
                 }
-                match kind {
+                let info = match kind {
                     CodeBlockKind::Fenced(info_string) => {
                         rewrite_marker(self.input, &range, self)?;
 
-                        let info = if info_string.is_empty() {
+                        if info_string.is_empty() {
                             writeln!(self)?;
                             None
                         } else {
@@ -846,11 +846,7 @@ where
                                 writeln!(self, "{info_string}")?;
                             }
                             Some(info_string)
-                        };
-                        self.new_external_formatted(
-                            BufferType::CodeBlock { info },
-                            range.len() * 2,
-                        )?;
+                        }
                     }
                     CodeBlockKind::Indented => {
                         // TODO(ytmimi) support tab as an indent
@@ -863,8 +859,10 @@ where
                         } */
 
                         self.indentation.push(indentation.into());
+                        None
                     }
-                }
+                };
+                self.new_external_formatted(BufferType::CodeBlock { info }, range.len() * 2)?;
                 self.nested_context.push(tag);
             }
             Tag::List(_) => {
@@ -1105,7 +1103,6 @@ where
                     .external_formatter
                     .as_ref()
                     .is_some_and(|f| f.is_empty());
-                self.flush_external_formatted()?;
 
                 let popped_tag = self.nested_context.pop();
                 let Some(Tag::CodeBlock(kind)) = &popped_tag else {
@@ -1113,6 +1110,7 @@ where
                 };
                 match kind {
                     CodeBlockKind::Fenced(_) => {
+                        self.flush_external_formatted()?;
                         // write closing code fence
                         if !empty_code_block
                             && !matches!(self.rewrite_buffer.chars().last(), Some('\n'))
@@ -1123,6 +1121,11 @@ where
                         rewrite_marker(self.input, &range, self)?;
                     }
                     CodeBlockKind::Indented => {
+                        // Need to write indentation for the first line.
+                        if let Some(external_formatter) = self.external_formatter.take() {
+                            tracing::debug!("Flushing indented code block formatter.");
+                            self.join_with_indentation(&external_formatter.into_buffer(), true)?;
+                        }
                         let popped_indentation = self
                             .indentation
                             .pop()
