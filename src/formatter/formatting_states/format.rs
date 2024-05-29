@@ -275,8 +275,9 @@ where
                             let info_string = exclude_fence
                                 .lines()
                                 .next()
-                                .unwrap_or_else(|| info_string.as_ref())
-                                .trim();
+                                .unwrap_or_else(|| info_string)
+                                .trim()
+                                .into();
 
                             if starts_with_space {
                                 writeln!(self, " {info_string}")?;

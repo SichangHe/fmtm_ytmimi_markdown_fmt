@@ -15,66 +15,82 @@
 //! 1.  are easy!
 //! "##;
 //!
-//! let formatted = r##"# Getting Started
+//! let expected = r##"# Getting Started
 //! 1. numbered lists
 //! 1. are easy!
 //! "##;
 //!
 //! let output = MarkdownFormatter::default().format(markdown)?;
-//! # assert_eq!(output, formatted);
+//! assert_eq!(output, expected);
 //! # Ok::<(), std::fmt::Error>(())
 //! ```
 //!
 //! # Using [`MarkdownFormatter`] as a builder
 //!
 //! The formatter gives you control to configure Markdown formatting.
-// TODO: Fix this example.
-// //! ````rust
-// //! use fmtm_ytmimi_markdown_fmt::{
-// //!     rewrite_markdown, rewrite_markdown_with_builder, MarkdownFormatter,
-// //! };
-// //!
-// //! let builder = MarkdownFormatter::with_code_block_formatter(|info_string, code_block| {
-// //!     match info_string.to_lowercase().as_str() {
-// //!         "markdown" => rewrite_markdown(&code_block).unwrap_or(code_block),
-// //!         _ => code_block
-// //!     }
-// //! });
-// //!
-// //! let markdown = r##" # Using the Builder
-// //! + markdown code block nested in a list
-// //!   ```markdown
-// //!   A nested markdown snippet!
-// //!
-// //!    * unordered lists
-// //!    are also pretty easy!
-// //!    - `-` or `+` can also be used as unordered list markers.
-// //!    ```
-// //! "##;
-// //!
-// //! let formatted = r##"# Using the Builder
-// //! + markdown code block nested in a list
-// //!   ```markdown
-// //!   A nested markdown snippet!
-// //!
-// //!   * unordered lists
-// //!     are also pretty easy!
-// //!   - `-` or `+` can also be used as unordered list markers.
-// //!   ```
-// //! "##;
-// //!
-// //! let output = rewrite_markdown_with_builder(markdown, builder)?;
-// //! # assert_eq!(output, formatted);
-// //! # Ok::<(), std::fmt::Error>(())
-// //! ````
+//! ````rust
+//! use fmtm_ytmimi_markdown_fmt::*;
+//! #[derive(Default)]
+//! struct CodeBlockFormatter;
+//! impl FormatterFn for CodeBlockFormatter {
+//!     fn format(
+//!         &mut self,
+//!         buffer_type: BufferType,
+//!         _max_width: Option<usize>,
+//!         input: String,
+//!     ) -> String {
+//!         let BufferType::CodeBlock { info } = buffer_type else {
+//!             unreachable!();
+//!         };
+//!         match info {
+//!             Some(info) if info.as_ref() == "markdown" => {
+//!                 MarkdownFormatter::default().format(&input).unwrap_or(input)
+//!             }
+//!             _ => input,
+//!         }
+//!     }
+//! }
+//!
+//! let input = r##" # Using the Builder
+//! + markdown code block nested in a list
+//!   ```markdown
+//!   A nested markdown snippet!
+//!
+//!    * unordered lists
+//!    are also pretty easy!
+//!    - `-` or `+` can also be used as unordered list markers.
+//!    ```
+//! "##;
+//!
+//! let expected = r##"# Using the Builder
+//! - markdown code block nested in a list
+//!     ```markdown
+//!     A nested markdown snippet!
+//!
+//!     * unordered lists
+//!       are also pretty easy!
+//!     - `-` or `+` can also be used as unordered list markers.
+//!     ```
+//! "##;
+//!
+//! type MyFormatter = MarkdownFormatter<
+//!     FormatterCombination<
+//!         FnFormatter<CodeBlockFormatter>,
+//!         TrimTo4Indent,
+//!         TrimTo4Indent,
+//!         Paragraph,
+//!     >,
+//! >;
+//! let output =
+//!     MyFormatter::with_config_and_external_formatter(Config::sichanghe_opinion()).format(input)?;
+//! assert_eq!(output, expected);
+//! # Ok::<(), std::fmt::Error>(())
+//! ````
 
-use std::borrow::Cow;
-use std::collections::VecDeque;
-use std::fmt::Write;
-use std::iter::Peekable;
-use std::num::ParseIntError;
-use std::ops::Range;
-use std::str::FromStr;
+use std::{
+    borrow::Cow, collections::VecDeque, fmt::Write, iter::Peekable, marker::PhantomData,
+    num::ParseIntError, ops::Range, str::FromStr,
+};
 
 use itertools::{EitherOrBoth, Itertools};
 use pulldown_cmark::{
@@ -106,8 +122,9 @@ pub use crate::{
     builder::MarkdownFormatter,
     config::Config,
     external_formatter::{
-        BufferType, DefaultFormatterCombination, ExternalFormatter, FormatterCombination,
-        FormattingContext, Paragraph, PreservingBuffer, TrimTo4Indent,
+        BufferType, DefaultFormatterCombination, ExternalFormatter, FnFormatter,
+        FormatterCombination, FormatterFn, FormattingContext, Paragraph, PreservingBuffer,
+        TrimTo4Indent,
     },
     list::{ListMarker, OrderedListMarker, ParseListMarkerError, UnorderedListMarker},
 };

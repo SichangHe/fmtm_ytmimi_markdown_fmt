@@ -1,8 +1,12 @@
 use super::*;
 
 mod default;
+mod fn_based;
 
-pub use default::{DefaultFormatterCombination, Paragraph, PreservingBuffer, TrimTo4Indent};
+pub use {
+    default::{DefaultFormatterCombination, Paragraph, PreservingBuffer, TrimTo4Indent},
+    fn_based::{FnFormatter, FormatterFn},
+};
 
 /// A formatter buffer we write non-Markdown string into.
 pub trait ExternalFormatter: Write {
@@ -21,14 +25,14 @@ pub trait ExternalFormatter: Write {
 }
 
 /// Type of the string being written to a [`ExternalFormatter`].
-#[derive(Copy, Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub enum BufferType<'a> {
     /// String in a code block.
     CodeBlock {
         /// Optional [`info string`] of the code block.
         ///
         /// [`info string`]: https://spec.commonmark.org/0.31.2/#fenced-code-blocks
-        info: Option<&'a str>,
+        info: Option<CowStr<'a>>,
     },
     /// Display math expression.
     DisplayMath,
@@ -65,8 +69,8 @@ pub enum FormattingContext {
 
 /// A convenience combination of
 /// external formatters implementing [`ExternalFormatter`],
-/// using one [`ExternalFormatter`] for each of code block, HTML block,
-/// and paragraph formatting.
+/// using one [`ExternalFormatter`] for each of code block (`C`),
+/// display math (`D`), HTML block (`H`), and paragraph (`P`) formatting.
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub enum FormatterCombination<C, D, H, P> {
     /// Inner code block formatter.
