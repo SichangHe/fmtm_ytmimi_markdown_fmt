@@ -102,7 +102,7 @@ where
     /// writing to while reformatting
     pub(crate) fn current_buffer(&mut self) -> Option<&mut dyn std::fmt::Write> {
         if self.force_rewrite_buffer {
-            tracing::trace!("rewrite_buffer");
+            tracing::trace!("force_rewrite_buffer");
             Some(&mut self.rewrite_buffer)
         } else if self.in_fenced_code_block() || self.in_indented_code_block() {
             tracing::trace!("code_block_buffer");
@@ -119,11 +119,9 @@ where
             self.table_state
                 .as_mut()
                 .map(|s| s as &mut dyn std::fmt::Write)
-        } else if self.in_paragraph() {
-            tracing::trace!("paragraph");
-            self.external_formatter
-                .as_mut()
-                .map(|p| p as &mut dyn std::fmt::Write)
+        } else if let Some(external_formatter) = self.external_formatter.as_mut() {
+            tracing::trace!(context = ?external_formatter.context());
+            Some(external_formatter as &mut dyn std::fmt::Write)
         } else {
             tracing::trace!("rewrite_buffer");
             Some(&mut self.rewrite_buffer)
@@ -138,10 +136,8 @@ where
                 .is_some_and(ExternalFormatter::is_empty)
         } else if self.in_table_header() || self.in_table_row() {
             self.table_state.as_ref().is_some_and(|s| s.is_empty())
-        } else if self.in_paragraph() {
-            self.external_formatter
-                .as_ref()
-                .is_some_and(ExternalFormatter::is_empty)
+        } else if let Some(external_formatter) = self.external_formatter.as_ref() {
+            external_formatter.is_empty()
         } else {
             self.rewrite_buffer.is_empty()
         }
@@ -255,6 +251,17 @@ where
         self.write_indentation_if_needed()
     }
 
+    pub(crate) fn write_newline_after_code_block(
+        &mut self,
+        empty_code_block: bool,
+    ) -> std::fmt::Result {
+        if !empty_code_block && !matches!(self.rewrite_buffer.chars().last(), Some('\n')) {
+            tracing::trace!(r"Writing an extra `\n` after code block.");
+            writeln!(self)?;
+        }
+        self.write_indentation(false)
+    }
+
     pub(crate) fn write_indentation_if_needed(&mut self) -> Result<bool, std::fmt::Error> {
         match self.rewrite_buffer.chars().last() {
             Some('\n') | None => {
@@ -319,6 +326,7 @@ where
     pub(crate) fn rewrite_final_reference_links(mut self) -> Result<String, std::fmt::Error> {
         // use std::mem::take to work around the borrow checker
         let reference_links = std::mem::take(&mut self.reference_links);
+        tracing::trace!(?reference_links);
 
         // need to iterate in reverse because reference_links is a stack
         for (label, dest, title, range) in reference_links.into_iter().rev() {
@@ -336,9 +344,11 @@ where
         &mut self,
         buffer: &str,
         start_with_indentation: bool,
+        trim_last_newline: bool,
     ) -> std::fmt::Result {
+        tracing::trace!(start_with_indentation, buffer);
         self.force_rewrite_buffer = true;
-        let mut lines = buffer.trim_end().lines().peekable();
+        let mut lines = buffer.split_inclusive('\n').peekable();
         while let Some(line) = lines.next() {
             let is_last = lines.peek().is_none();
             let is_next_empty = lines
@@ -350,12 +360,12 @@ where
                 self.write_indentation(line.trim().is_empty())?;
             }
 
-            if !line.trim().is_empty() {
+            if line.trim().is_empty() {
+                self.write_str(line.trim_start_matches(' '))?;
+            } else if is_last && trim_last_newline {
+                self.write_str(line.trim_end_matches('\n'))?;
+            } else {
                 self.write_str(line)?;
-            }
-
-            if !is_last {
-                writeln!(self)?;
             }
 
             if !is_last && !start_with_indentation {
@@ -371,17 +381,17 @@ where
         buffer_type: BufferType,
         capacity: usize,
     ) -> std::fmt::Result {
-        self.flush_external_formatted()?;
+        self.flush_external_formatted(true)?;
         self.external_formatter = Some(E::new(buffer_type, self.formatter_width(), capacity));
         Ok(())
     }
 
-    pub(crate) fn flush_external_formatted(&mut self) -> std::fmt::Result {
+    pub(crate) fn flush_external_formatted(&mut self, trim_last_newline: bool) -> std::fmt::Result {
         if let Some(external_formatter) = self.external_formatter.take() {
             tracing::debug!("Flushing external formatter.");
             let external = !matches!(external_formatter.context(), FormattingContext::Paragraph);
             match (external, self.rewrite_buffer.chars().last()) {
-                (false, _) | (_, Some('\n' | ' ') | None) => {}
+                (false, _) | (_, Some('\n' | ' ' | '$') | None) => {}
                 // Code and HTML blocks should have a `\n` or some sort of
                 // indentation before them.
                 _ => self.write_str("\n")?,
@@ -389,6 +399,7 @@ where
             self.join_with_indentation(
                 &external_formatter.into_buffer(),
                 self.needs_indent && external,
+                trim_last_newline,
             )?;
         }
         Ok(())
@@ -452,9 +463,9 @@ pub(crate) fn rewrite_marker_with_limit<W: std::fmt::Write>(
     let marker_char = input[range.start..].chars().next().unwrap();
     let marker = find_marker(input, range, |c| c != marker_char);
     if let Some(mark_max_width) = size_limit {
-        write!(writer, "{}", &marker[..mark_max_width])
+        writer.write_str(&marker[..mark_max_width])
     } else {
-        write!(writer, "{marker}")
+        writer.write_str(marker)
     }
 }
 

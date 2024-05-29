@@ -29,7 +29,7 @@ where
                 self.check_needs_indent(&event);
             }
             // TODO: Format display math with its own buffer.
-            Event::Text(ref parsed_text) | Event::DisplayMath(ref parsed_text) => {
+            Event::Text(ref parsed_text) => {
                 if self
                     .external_formatter
                     .as_ref()
@@ -77,6 +77,15 @@ where
                     }
                     self.check_needs_indent(&event);
                 }
+            }
+            Event::DisplayMath(ref parsed_text) => {
+                self.flush_external_formatted(false)?;
+                self.write_str("$$")?;
+                self.new_external_formatted(BufferType::DisplayMath, parsed_text.len())?;
+                self.write_str(parsed_text)?;
+                self.flush_external_formatted(false)?;
+                self.write_indentation_if_needed()?;
+                self.write_str("$$")?;
             }
             Event::Code(_) | Event::Html(_) => {
                 write!(self, "{}", &self.input[range])?;
@@ -378,6 +387,8 @@ where
                 // self.list_markers.push(list_marker)
             }
             Tag::FootnoteDefinition(label) => {
+                let newlines = self.count_newlines(&range);
+                self.write_newlines(newlines)?;
                 write!(self, "[^{label}]: ")?;
             }
             Tag::Emphasis => {
@@ -451,7 +462,7 @@ where
             Tag::HtmlBlock => {
                 let newlines = self.count_newlines(&range);
                 tracing::trace!(newlines);
-                self.flush_external_formatted()?;
+                self.flush_external_formatted(false)?;
                 for _ in 0..newlines {
                     self.write_char('\n')?;
                 }
@@ -470,7 +481,7 @@ where
             TagEnd::Paragraph => {
                 let popped_tag = self.nested_context.pop();
                 debug_assert_eq!(popped_tag, Some(Tag::Paragraph));
-                self.flush_external_formatted()?;
+                self.flush_external_formatted(true)?;
             }
             TagEnd::Heading(_) => {
                 let (fragment_identifier, classes) = self
@@ -525,7 +536,7 @@ where
                     .external_formatter
                     .as_ref()
                     .is_some_and(|f| f.is_empty());
-                self.flush_external_formatted()?;
+                self.flush_external_formatted(true)?;
 
                 let popped_tag = self.nested_context.pop();
                 let Some(Tag::CodeBlock(kind)) = &popped_tag else {
@@ -534,12 +545,7 @@ where
                 match kind {
                     CodeBlockKind::Fenced(_) => {
                         // write closing code fence
-                        if !empty_code_block
-                            && !matches!(self.rewrite_buffer.chars().last(), Some('\n'))
-                        {
-                            writeln!(self)?;
-                        }
-                        self.write_indentation(false)?;
+                        self.write_newline_after_code_block(empty_code_block)?;
                         rewrite_marker(self.input, &range, self)?;
                     }
                     CodeBlockKind::Indented => {
@@ -644,7 +650,7 @@ where
                 let popped_tag = self.nested_context.pop();
                 debug_assert_eq!(popped_tag.unwrap().to_end(), tag);
                 if let Some(state) = self.table_state.take() {
-                    self.join_with_indentation(&state.format()?, false)?;
+                    self.join_with_indentation(&state.format()?, false, true)?;
                 }
                 let popped_indentation = self.indentation.pop().expect("we added `|` in start_tag");
                 debug_assert_eq!(popped_indentation, "|");
@@ -660,7 +666,7 @@ where
                 }
             }
             TagEnd::HtmlBlock => {
-                self.flush_external_formatted()?;
+                self.flush_external_formatted(true)?;
                 self.check_needs_indent(&Event::End(tag));
             }
             TagEnd::MetadataBlock(kind) => {

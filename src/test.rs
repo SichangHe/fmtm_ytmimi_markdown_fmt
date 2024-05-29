@@ -75,6 +75,20 @@ I have a couple of good firends there.";
     assert_snapshot!(rewrite)
 }
 
+#[test]
+fn reformat_display_math_in_list() {
+    init_tracing();
+    let input = "- $a$
+
+    $$
+    a
+    $$";
+    let mut formatter = MarkdownFormatter::default();
+    formatter.sichanghe_config();
+    let rewrite = formatter.format(input).unwrap();
+    assert_snapshot!(rewrite)
+}
+
 pub(crate) fn get_test_files<P: AsRef<Path>>(
     path: P,
     extension: &str,

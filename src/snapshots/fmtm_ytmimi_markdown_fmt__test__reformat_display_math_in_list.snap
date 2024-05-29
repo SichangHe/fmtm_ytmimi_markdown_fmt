@@ -1,0 +1,9 @@
+---
+source: src/test.rs
+expression: rewrite
+---
+- $a$
+
+    $$
+    a
+    $$

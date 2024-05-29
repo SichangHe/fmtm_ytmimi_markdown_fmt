@@ -1,9 +1,11 @@
 use super::*;
 
 /// A default [`ExternalFormatter`].
-/// Preserve code blocks and HTML blocks as is, and line-wrap paragraphs.
+/// Preserve code blocks as is,
+/// trim indentation < 4 in display math and HTML blocks,
+/// and line-wrap paragraphs.
 pub type DefaultFormatterCombination =
-    FormatterCombination<PreservingBuffer, TrimStartBuffer, Paragraph>;
+    FormatterCombination<PreservingBuffer, TrimStartBuffer, TrimStartBuffer, Paragraph>;
 
 /// A buffer where we write HTML blocks. Preserves everything as is.
 pub struct PreservingBuffer {
@@ -20,13 +22,10 @@ impl Write for PreservingBuffer {
 
 impl ExternalFormatter for PreservingBuffer {
     fn new(buffer_type: BufferType, _max_width: Option<usize>, capacity: usize) -> Self {
+        tracing::trace!(?buffer_type, capacity, "PreservingBuffer::new");
         Self {
             buffer: String::with_capacity(capacity),
-            context: match buffer_type {
-                BufferType::CodeBlock { .. } => FormattingContext::CodeBlock,
-                BufferType::HtmlBlock => FormattingContext::HtmlBlock,
-                BufferType::Paragraph => FormattingContext::Paragraph,
-            },
+            context: buffer_type.to_formatting_context(),
         }
     }
 
@@ -77,6 +76,7 @@ impl Write for Paragraph {
 
 impl ExternalFormatter for Paragraph {
     fn new(_: BufferType, max_width: Option<usize>, capacity: usize) -> Self {
+        tracing::trace!(max_width, capacity, "Paragraph::new");
         Self {
             max_width,
             buffer: String::with_capacity(capacity),
@@ -136,24 +136,31 @@ pub struct TrimStartBuffer {
 
 impl Write for TrimStartBuffer {
     fn write_str(&mut self, s: &str) -> std::fmt::Result {
-        let s = match self.buffer.chars().last() {
-            Some('\n') | None => s.trim_start_matches(' '),
-            _ => s,
-        };
-        self.buffer.push_str(s);
+        for line in s.split_inclusive('\n') {
+            let line = match self.buffer.chars().last() {
+                Some('\n') | None => {
+                    match line.chars().take_while(|char| *char == ' ').count() % 4 {
+                        n_insignificant_space if n_insignificant_space > 0 => {
+                            tracing::trace!(?n_insignificant_space, line);
+                            &line[n_insignificant_space..]
+                        }
+                        _ => line,
+                    }
+                }
+                _ => line,
+            };
+            self.buffer.push_str(line);
+        }
         Ok(())
     }
 }
 
 impl ExternalFormatter for TrimStartBuffer {
     fn new(buffer_type: BufferType, _max_width: Option<usize>, capacity: usize) -> Self {
+        tracing::trace!(?buffer_type, capacity, "TrimStartBuffer::new");
         Self {
             buffer: String::with_capacity(capacity),
-            context: match buffer_type {
-                BufferType::CodeBlock { .. } => FormattingContext::CodeBlock,
-                BufferType::HtmlBlock => FormattingContext::HtmlBlock,
-                BufferType::Paragraph => FormattingContext::Paragraph,
-            },
+            context: buffer_type.to_formatting_context(),
         }
     }
 

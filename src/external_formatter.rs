@@ -30,11 +30,24 @@ pub enum BufferType<'a> {
         /// [`info string`]: https://spec.commonmark.org/0.31.2/#fenced-code-blocks
         info: Option<&'a str>,
     },
+    /// Display math expression.
+    DisplayMath,
     /// String in an HTML block.
     HtmlBlock,
     /// String in a paragraph.
     Paragraph,
-    // TODO: Math.
+}
+
+impl<'a> BufferType<'a> {
+    /// The associated [`FormattingContext`] of this buffer type.
+    pub fn to_formatting_context(&self) -> FormattingContext {
+        match self {
+            Self::CodeBlock { .. } => FormattingContext::CodeBlock,
+            Self::DisplayMath => FormattingContext::DisplayMath,
+            Self::HtmlBlock => FormattingContext::HtmlBlock,
+            Self::Paragraph => FormattingContext::Paragraph,
+        }
+    }
 }
 
 /// Type of the formatting context an [`ExternalFormatter`] is in.
@@ -42,11 +55,12 @@ pub enum BufferType<'a> {
 pub enum FormattingContext {
     /// A code block.
     CodeBlock,
+    /// A display math block.
+    DisplayMath,
     /// An HTML block.
     HtmlBlock,
     /// A paragraph.
     Paragraph,
-    // TODO: Math.
 }
 
 /// A convenience combination of
@@ -54,34 +68,38 @@ pub enum FormattingContext {
 /// using one [`ExternalFormatter`] for each of code block, HTML block,
 /// and paragraph formatting.
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub enum FormatterCombination<C, H, P> {
+pub enum FormatterCombination<C, D, H, P> {
     /// Inner code block formatter.
     CodeBlock(C),
+    /// Inner display math formatter.
+    DisplayMath(D),
     /// Inner HTML block formatter.
     HtmlBlock(H),
     /// Inner paragraph formatter.
     Paragraph(P),
-    // TODO: Math.
 }
 
-impl<C, H, P> Write for FormatterCombination<C, H, P>
+impl<C, D, H, P> Write for FormatterCombination<C, D, H, P>
 where
     C: Write,
+    D: Write,
     H: Write,
     P: Write,
 {
     fn write_str(&mut self, s: &str) -> std::fmt::Result {
         match self {
             Self::CodeBlock(c) => c.write_str(s),
+            Self::DisplayMath(d) => d.write_str(s),
             Self::HtmlBlock(h) => h.write_str(s),
             Self::Paragraph(p) => p.write_str(s),
         }
     }
 }
 
-impl<C, H, P> ExternalFormatter for FormatterCombination<C, H, P>
+impl<C, D, H, P> ExternalFormatter for FormatterCombination<C, D, H, P>
 where
     C: ExternalFormatter,
+    D: ExternalFormatter,
     H: ExternalFormatter,
     P: ExternalFormatter,
 {
@@ -90,6 +108,7 @@ where
             BufferType::CodeBlock { .. } => {
                 Self::CodeBlock(C::new(buffer_type, max_width, capacity))
             }
+            BufferType::DisplayMath => Self::DisplayMath(D::new(buffer_type, max_width, capacity)),
             BufferType::HtmlBlock => Self::HtmlBlock(H::new(buffer_type, max_width, capacity)),
             BufferType::Paragraph => Self::Paragraph(P::new(buffer_type, max_width, capacity)),
         }
@@ -98,6 +117,7 @@ where
     fn is_empty(&self) -> bool {
         match self {
             Self::CodeBlock(c) => c.is_empty(),
+            Self::DisplayMath(d) => d.is_empty(),
             Self::HtmlBlock(h) => h.is_empty(),
             Self::Paragraph(p) => p.is_empty(),
         }
@@ -106,6 +126,7 @@ where
     fn context(&self) -> FormattingContext {
         match self {
             Self::CodeBlock(c) => c.context(),
+            Self::DisplayMath(d) => d.context(),
             Self::HtmlBlock(h) => h.context(),
             Self::Paragraph(p) => p.context(),
         }
@@ -114,6 +135,7 @@ where
     fn into_buffer(self) -> String {
         match self {
             Self::CodeBlock(c) => c.into_buffer(),
+            Self::DisplayMath(d) => d.into_buffer(),
             Self::HtmlBlock(h) => h.into_buffer(),
             Self::Paragraph(p) => p.into_buffer(),
         }
