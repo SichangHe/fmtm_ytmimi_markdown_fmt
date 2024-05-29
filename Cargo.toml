@@ -1,6 +1,6 @@
 [package]
 name = "fmtm_ytmimi_markdown_fmt"
-version = "0.0.1"
+version = "0.0.2"
 edition = "2021"
 readme = "README.md"
 description = "Fork of @ytmimi's Markdown formatter; powers FMTM."
