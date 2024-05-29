@@ -244,12 +244,12 @@ Inline and display math in the same list
     $$
 
 - ```math
-    b
-    ```
+  b
+  ```
 
-    $$
-    b
-    $$
+  $$
+  b
+  $$
 
 Images and math in the same list
 

@@ -1109,7 +1109,7 @@ fn markdown_indented_code_blocks_117() {
 #[test]
 fn markdown_indented_code_blocks_118() {
     // https://spec.commonmark.org/0.30/#example-118
-    test_identical_markdown_events!("    foo  ", r##"    foo"##);
+    test_identical_markdown_events!("    foo  ");
 }
 
 #[test]
@@ -1239,8 +1239,7 @@ fn markdown_fenced_code_blocks_129() {
     // https://spec.commonmark.org/0.30/#example-129
     test_identical_markdown_events!(
         "```\n\n  \n```",
-        r##"```
-```"##
+        "```\n\n\n```"
     );
 }
 
@@ -3503,13 +3502,7 @@ fn markdown_lists_318() {
 
 
   ```
-- c"##,
-        r##"- a
-- ```
-  b
-  ```
-- c"##
-    );
+- c"##);
 }
 
 #[test]

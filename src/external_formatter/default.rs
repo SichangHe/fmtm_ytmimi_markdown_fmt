@@ -5,7 +5,7 @@ use super::*;
 /// trim indentation < 4 in display math and HTML blocks,
 /// and line-wrap paragraphs.
 pub type DefaultFormatterCombination =
-    FormatterCombination<PreservingBuffer, TrimStartBuffer, TrimStartBuffer, Paragraph>;
+    FormatterCombination<PreservingBuffer, TrimTo4Indent, TrimTo4Indent, Paragraph>;
 
 /// A buffer where we write HTML blocks. Preserves everything as is.
 pub struct PreservingBuffer {
@@ -128,13 +128,13 @@ impl ExternalFormatter for Paragraph {
     }
 }
 
-/// A buffer that trims each line's leading spaces.
-pub struct TrimStartBuffer {
+/// A buffer that trims each line's leading spaces down to a multiple of 4.
+pub struct TrimTo4Indent {
     buffer: String,
     context: FormattingContext,
 }
 
-impl Write for TrimStartBuffer {
+impl Write for TrimTo4Indent {
     fn write_str(&mut self, s: &str) -> std::fmt::Result {
         for line in s.split_inclusive('\n') {
             let line = match self.buffer.chars().last() {
@@ -155,7 +155,7 @@ impl Write for TrimStartBuffer {
     }
 }
 
-impl ExternalFormatter for TrimStartBuffer {
+impl ExternalFormatter for TrimTo4Indent {
     fn new(buffer_type: BufferType, _max_width: Option<usize>, capacity: usize) -> Self {
         tracing::trace!(?buffer_type, capacity, "TrimStartBuffer::new");
         Self {

@@ -700,7 +700,7 @@ fn gfm_markdown_indented_code_blocks_87() {
 #[test]
 fn gfm_markdown_indented_code_blocks_88() {
     // https://github.github.com/gfm/#example-88
-    test_identical_markdown_events!("    foo  ",r##"    foo"##);
+    test_identical_markdown_events!("    foo  ");
 }
 
 #[test]
@@ -804,8 +804,7 @@ bbb"##);
 #[test]
 fn gfm_markdown_fenced_code_blocks_99() {
     // https://github.github.com/gfm/#example-99
-    test_identical_markdown_events!("```\n\n  \n```",r##"```
-```"##);
+    test_identical_markdown_events!("```\n\n  \n```","```\n\n\n```");
 }
 
 #[test]
@@ -2739,10 +2738,6 @@ fn gfm_markdown_lists_298() {
   b
 
 
-  ```
-- c"##,r##"- a
-- ```
-  b
   ```
 - c"##);
 }

@@ -376,12 +376,20 @@ where
                 self.nested_context.push(tag);
                 // Increment the list marker in case this is a ordered list and
                 // swap the list marker we took earlier
-                self.indentation.push(
-                    self.config
+                let indentation = match self.peek() {
+                    Some(Event::Start(Tag::CodeBlock(_) | Tag::HtmlBlock | Tag::TableHead)) => {
+                        // Have to use the "correct" indentation if
+                        // a code block, HTML block,
+                        // or table follows immediately.
+                        list_marker.indentation()
+                    }
+                    _ => self
+                        .config
                         .fixed_indentation
                         .clone()
                         .unwrap_or_else(|| list_marker.indentation()),
-                );
+                };
+                self.indentation.push(indentation);
                 // TODO(ytmimi) Add a configuration to allow incrementing ordered lists
                 // list_marker.increment_count();
                 // self.list_markers.push(list_marker)
