@@ -694,7 +694,7 @@ fn gfm_markdown_indented_code_blocks_86() {
 #[test]
 fn gfm_markdown_indented_code_blocks_87() {
     // https://github.github.com/gfm/#example-87
-    test_identical_markdown_events!("\n    \n    foo\n    ",r##"    foo"##);
+    test_identical_markdown_events!("\n    \n    foo\n    ","\n\n    foo");
 }
 
 #[test]

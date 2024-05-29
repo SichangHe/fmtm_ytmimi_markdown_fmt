@@ -245,6 +245,16 @@ where
         Ok(())
     }
 
+    pub(crate) fn write_newlines_before_code_block(
+        &mut self,
+        newlines: usize,
+    ) -> Result<bool, std::fmt::Error> {
+        for _ in 0..newlines {
+            self.write_char('\n')?;
+        }
+        self.write_indentation_if_needed()
+    }
+
     pub(crate) fn write_indentation_if_needed(&mut self) -> Result<bool, std::fmt::Error> {
         match self.rewrite_buffer.chars().last() {
             Some('\n') | None => {
@@ -369,14 +379,17 @@ where
     pub(crate) fn flush_external_formatted(&mut self) -> std::fmt::Result {
         if let Some(external_formatter) = self.external_formatter.take() {
             tracing::debug!("Flushing external formatter.");
-            let start_with_indentation =
-                !matches!(external_formatter.context(), FormattingContext::Paragraph);
-            match (start_with_indentation, self.rewrite_buffer.chars().last()) {
-                (false, _) | (_, Some('\n') | None) => {}
-                // Code and HTML blocks should start have a `\n` before them.
+            let external = !matches!(external_formatter.context(), FormattingContext::Paragraph);
+            match (external, self.rewrite_buffer.chars().last()) {
+                (false, _) | (_, Some('\n' | ' ') | None) => {}
+                // Code and HTML blocks should have a `\n` or some sort of
+                // indentation before them.
                 _ => self.write_str("\n")?,
             }
-            self.join_with_indentation(&external_formatter.into_buffer(), start_with_indentation)?;
+            self.join_with_indentation(
+                &external_formatter.into_buffer(),
+                self.needs_indent && external,
+            )?;
         }
         Ok(())
     }

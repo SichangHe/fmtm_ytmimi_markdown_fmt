@@ -1103,7 +1103,7 @@ fn markdown_indented_code_blocks_116() {
 #[test]
 fn markdown_indented_code_blocks_117() {
     // https://spec.commonmark.org/0.30/#example-117
-    test_identical_markdown_events!("\n    \n    foo\n    ", r##"    foo"##);
+    test_identical_markdown_events!("\n    \n    foo\n    ", "\n\n    foo");
 }
 
 #[test]

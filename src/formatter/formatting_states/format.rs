@@ -78,7 +78,7 @@ where
                     self.check_needs_indent(&event);
                 }
             }
-            Event::Code(_) => {
+            Event::Code(_) | Event::Html(_) => {
                 write!(self, "{}", &self.input[range])?;
             }
             Event::SoftBreak => {
@@ -106,13 +106,6 @@ where
             }
             Event::HardBreak => {
                 write!(self, "{}", &self.input[range])?;
-            }
-            Event::Html(_) => {
-                // NOTE: This limitation is because Pulldown-CMark
-                // incorrectly include spaces before HTML.
-                let html = &self.input[range].trim_start_matches(' ');
-                write!(self, "{}", html)?; // Write HTML as is.
-                self.check_needs_indent(&event);
             }
             Event::InlineHtml(_) | Event::InlineMath(_) => {
                 let newlines = self.count_newlines(&range);
@@ -254,14 +247,12 @@ where
             }
             Tag::CodeBlock(ref kind) => {
                 let newlines = self.count_newlines(&range);
-                for _ in 0..newlines {
-                    self.write_char('\n')?;
-                }
                 let info = match kind {
                     CodeBlockKind::Fenced(info_string) => {
-                        self.write_indentation_if_needed()?;
+                        self.write_newlines_before_code_block(newlines)?;
                         rewrite_marker(self.input, &range, self)?;
 
+                        self.needs_indent = true;
                         if info_string.is_empty() {
                             writeln!(self)?;
                             None
@@ -283,10 +274,6 @@ where
                             } else {
                                 writeln!(self, "{info_string}")?;
                             }
-                            /* if !matches!(self.peek(), Some(Event::End(TagEnd::CodeBlock))) {
-                                // Only write indentation if this isn't an empty indented code block
-                                self.write_indentation(false)?;
-                            } */
                             Some(info_string)
                         }
                     }
@@ -294,10 +281,15 @@ where
                         // TODO(ytmimi) support tab as an indent
                         let indentation = "    ";
                         self.indentation.push(indentation.into());
-                        /* if !matches!(self.peek(), Some(Event::End(TagEnd::CodeBlock))) {
-                            // Only write indentation if this isn't an empty indented code block
-                            self.write_str(indentation)?;
-                        } */
+                        if !matches!(self.peek(), Some(Event::End(TagEnd::CodeBlock))) {
+                            // Only write the new line before and
+                            // the indentation if
+                            // this isn't an empty indented code block
+                            if !self.write_newlines_before_code_block(newlines)? {
+                                self.write_str(indentation)?;
+                            }
+                        }
+                        self.needs_indent = false;
                         None
                     }
                 };
