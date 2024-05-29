@@ -86,7 +86,10 @@ where
             })
             .collect::<Vec<_>>();
 
-        let iter = parser.into_offset_iter().all_loose_lists();
+        let iter = parser
+            .into_offset_iter()
+            .all_loose_lists()
+            .all_sequential_blocks();
 
         let fmt_state = <FormatState<E, _>>::new(input, self.config, iter, reference_links);
         fmt_state.format()
@@ -826,12 +829,12 @@ where
             }
             Tag::CodeBlock(ref kind) => {
                 let newlines = self.count_newlines(&range);
-                if self.needs_indent && newlines > 0 {
-                    self.write_newlines(newlines)?;
+                for _ in 0..newlines {
+                    self.write_char('\n')?;
                 }
-                self.needs_indent = false;
                 let info = match kind {
                     CodeBlockKind::Fenced(info_string) => {
+                        self.write_indentation_if_needed()?;
                         rewrite_marker(self.input, &range, self)?;
 
                         if info_string.is_empty() {
@@ -855,23 +858,21 @@ where
                             } else {
                                 writeln!(self, "{info_string}")?;
                             }
+                            /* if !matches!(self.peek(), Some(Event::End(TagEnd::CodeBlock))) {
+                                // Only write indentation if this isn't an empty indented code block
+                                self.write_indentation(false)?;
+                            } */
                             Some(info_string)
                         }
                     }
                     CodeBlockKind::Indented => {
                         // TODO(ytmimi) support tab as an indent
                         let indentation = "    ";
-
-                        // TODO: Check if this is really needed.
+                        self.indentation.push(indentation.into());
                         /* if !matches!(self.peek(), Some(Event::End(TagEnd::CodeBlock))) {
                             // Only write indentation if this isn't an empty indented code block
                             self.write_str(indentation)?;
                         } */
-
-                        self.indentation.push(indentation.into());
-                        if !self.write_indentation_if_needed()? {
-                            self.write_str(indentation)?;
-                        };
                         None
                     }
                 };
@@ -1031,23 +1032,13 @@ where
                 }
             }
             Tag::HtmlBlock => {
-                // TODO: Truly fix this by reordering the events.
-                if matches!(self.peek(), Some(Event::End(TagEnd::Paragraph))) {
-                    tracing::debug!("HTML block start before paragraph end.");
-                    // NOTE: Pulldown-CMark has a bug where it starts an HTML
-                    // block before ending a paragraph.
-                    // In this case, we consume the paragraph first.
-                    let (_, range) = self.events.next().expect("We peeked.");
-                    self.end_tag(TagEnd::Paragraph, range)?;
-                }
-
                 let newlines = self.count_newlines(&range);
                 tracing::trace!(newlines);
                 self.flush_external_formatted()?;
-                self.write_newlines(newlines)?;
-                self.write_indentation_if_needed()?;
+                for _ in 0..newlines {
+                    self.write_char('\n')?;
+                }
 
-                self.needs_indent = false;
                 self.new_external_formatted(BufferType::HtmlBlock, range.len() * 2)?;
             }
             Tag::MetadataBlock(kind) => {
@@ -1275,7 +1266,14 @@ where
     fn flush_external_formatted(&mut self) -> std::fmt::Result {
         if let Some(external_formatter) = self.external_formatter.take() {
             tracing::debug!("Flushing external formatter.");
-            self.join_with_indentation(&external_formatter.into_buffer(), false)?;
+            let start_with_indentation =
+                !matches!(external_formatter.context(), FormattingContext::Paragraph);
+            match (start_with_indentation, self.rewrite_buffer.chars().last()) {
+                (false, _) | (_, Some('\n') | None) => {}
+                // Code and HTML blocks should start have a `\n` before them.
+                _ => self.write_str("\n")?,
+            }
+            self.join_with_indentation(&external_formatter.into_buffer(), start_with_indentation)?;
         }
         Ok(())
     }

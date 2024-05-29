@@ -28,7 +28,6 @@
 //! # Using [`MarkdownFormatter`] as a builder
 //!
 //! The formatter gives you control to configure Markdown formatting.
-//!
 // TODO: Fix this example.
 // //! ````rust
 // //! use fmtm_ytmimi_markdown_fmt::{
@@ -98,7 +97,10 @@ mod test;
 mod utils;
 
 use crate::{
-    adapters::LooseListExt, formatter::FormatState, table::TableState, utils::unicode_str_width,
+    adapters::{LooseListExt, SequentialBlockExt},
+    formatter::FormatState,
+    table::TableState,
+    utils::unicode_str_width,
 };
 pub use crate::{
     builder::MarkdownFormatter,
