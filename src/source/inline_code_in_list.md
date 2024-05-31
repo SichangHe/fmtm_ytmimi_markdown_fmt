@@ -1,0 +1,4 @@
+1. A **route** basically says a **prefix** $p$`:
+IpNet` like `193.254.30.0/24` can go through a sequence of
+Autonomous Systems (**AS**es), each of which is represented by a `num:
+usize`.
