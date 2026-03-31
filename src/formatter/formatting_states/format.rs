@@ -197,7 +197,7 @@ where
                     write!(self, "{header}")?;
                 }
             }
-            Tag::BlockQuote(_) => {
+            Tag::BlockQuote(kind) => {
                 // Just in case we're starting a new block quote in a nested context where
                 // We alternate indentation levels we want to remove trailing whitespace
                 // from the blockquote that we're about to push on top of
@@ -214,6 +214,14 @@ where
                 }
 
                 self.nested_context.push(tag);
+
+                let alert_marker = kind.map(|kind| match kind {
+                    pulldown_cmark::BlockQuoteKind::Note => "NOTE",
+                    pulldown_cmark::BlockQuoteKind::Tip => "TIP",
+                    pulldown_cmark::BlockQuoteKind::Important => "IMPORTANT",
+                    pulldown_cmark::BlockQuoteKind::Warning => "WARNING",
+                    pulldown_cmark::BlockQuoteKind::Caution => "CAUTION",
+                });
 
                 match self.peek_with_range().map(|(e, r)| (e.clone(), r.clone())) {
                     Some((Event::End(TagEnd::BlockQuote), _)) => {
@@ -242,10 +250,18 @@ where
 
                         self.indentation.push("> ".into());
                         if newlines > 0 {
-                            write!(self, ">")?;
+                            if let Some(marker) = alert_marker {
+                                write!(self, "> [!{marker}]\\")?;
+                            } else {
+                                write!(self, ">")?;
+                            }
                             self.write_newlines(newlines)?;
                         } else {
-                            write!(self, "> ")?;
+                            if let Some(marker) = alert_marker {
+                                write!(self, "> [!{marker}]\\")?;
+                            } else {
+                                write!(self, "> ")?;
+                            }
                         }
                     }
                     None => {
