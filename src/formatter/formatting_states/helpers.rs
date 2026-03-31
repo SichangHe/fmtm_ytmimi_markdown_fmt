@@ -144,7 +144,7 @@ where
     }
 
     pub(crate) fn count_newlines(&self, range: &Range<usize>) -> usize {
-        if self.last_position == range.start {
+        if self.last_position == range.start || self.last_position >= range.end {
             return 0;
         }
 
