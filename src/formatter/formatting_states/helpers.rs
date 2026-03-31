@@ -389,18 +389,43 @@ where
     pub(crate) fn flush_external_formatted(&mut self, trim_last_newline: bool) -> std::fmt::Result {
         if let Some(external_formatter) = self.external_formatter.take() {
             tracing::debug!("Flushing external formatter.");
-            let external = !matches!(external_formatter.context(), FormattingContext::Paragraph);
+            let context = external_formatter.context();
+            let external = !matches!(context, FormattingContext::Paragraph);
             match (external, self.rewrite_buffer.chars().last()) {
                 (false, _) | (_, Some('\n' | ' ' | '$') | None) => {}
                 // Code and HTML blocks should have a `\n` or some sort of
                 // indentation before them.
                 _ => self.write_str("\n")?,
             }
-            self.join_with_indentation(
-                &external_formatter.into_buffer(),
-                self.needs_indent && external,
-                trim_last_newline,
-            )?;
+            let mut buffer = external_formatter.into_buffer();
+            if matches!(context, FormattingContext::Paragraph) && self.is_nested() {
+                let indent_len = self
+                    .indentation
+                    .iter()
+                    .map(|indent| indent.chars().filter(|c| *c == ' ').count())
+                    .sum::<usize>();
+                if indent_len > 0 {
+                    let mut normalized = String::with_capacity(buffer.len());
+                    let mut lines = buffer.split_inclusive('\n');
+                    if let Some(first_line) = lines.next() {
+                        normalized.push_str(first_line);
+                    }
+                    for line in lines {
+                        let mut line = line;
+                        let mut trimmed = 0;
+                        while trimmed < indent_len {
+                            let Some(stripped) = line.strip_prefix(' ') else {
+                                break;
+                            };
+                            line = stripped;
+                            trimmed += 1;
+                        }
+                        normalized.push_str(line);
+                    }
+                    buffer = normalized;
+                }
+            }
+            self.join_with_indentation(&buffer, self.needs_indent && external, trim_last_newline)?;
         }
         Ok(())
     }

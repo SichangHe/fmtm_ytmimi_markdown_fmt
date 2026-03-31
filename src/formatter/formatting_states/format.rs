@@ -103,10 +103,10 @@ where
                         write!(self, " ")?;
                     }
                 } else {
-                    write!(self, "{}", &self.input[range])?;
-
-                    // paraphraphs write their indentation after reformatting the text
-                    if !self.in_paragraph() {
+                    if self.in_paragraph() {
+                        self.write_char('\n')?;
+                    } else {
+                        write!(self, "{}", &self.input[range])?;
                         self.write_indentation(false)?;
                     }
 
