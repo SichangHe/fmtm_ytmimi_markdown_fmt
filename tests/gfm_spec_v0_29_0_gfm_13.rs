@@ -1,3 +1,5 @@
+#![allow(missing_docs)]
+
 // @generated
 // generated running `cargo build -F gen-tests`
 // test macros are defined in tests/common/mod.rs
@@ -6,76 +8,90 @@ mod common;
 #[test]
 fn gfm_markdown_tabs_1() {
     // https://github.github.com/gfm/#example-1
-    test_identical_markdown_events!(r##"	foo	baz		bim"##,r##"    foo	baz		bim"##);
+    test_identical_markdown_events!(r##"	foo	baz		bim"##, r##"    foo	baz		bim"##);
 }
 
 #[test]
 fn gfm_markdown_tabs_2() {
     // https://github.github.com/gfm/#example-2
-    test_identical_markdown_events!(r##"  	foo	baz		bim"##,r##"    foo	baz		bim"##);
+    test_identical_markdown_events!(r##"  	foo	baz		bim"##, r##"    foo	baz		bim"##);
 }
 
 #[test]
 fn gfm_markdown_tabs_3() {
     // https://github.github.com/gfm/#example-3
-    test_identical_markdown_events!(r##"    a	a
-    ὐ	a"##);
+    test_identical_markdown_events!(
+        r##"    a	a
+    ὐ	a"##
+    );
 }
 
 #[test]
 fn gfm_markdown_tabs_4() {
     // https://github.github.com/gfm/#example-4
-    test_identical_markdown_events!(r##"  - foo
+    test_identical_markdown_events!(
+        r##"  - foo
 
-	bar"##,r##"- foo
+	bar"##,
+        r##"- foo
 
-  bar"##);
+  bar"##
+    );
 }
 
 #[test]
 fn gfm_markdown_tabs_5() {
     // https://github.github.com/gfm/#example-5
-    test_identical_markdown_events!(r##"- foo
+    test_identical_markdown_events!(
+        r##"- foo
 
-		bar"##,r##"- foo
+		bar"##,
+        r##"- foo
 
-        bar"##);
+        bar"##
+    );
 }
 
 #[test]
 fn gfm_markdown_tabs_6() {
     // https://github.github.com/gfm/#example-6
-    test_identical_markdown_events!(r##">		foo"##,r##">       foo"##);
+    test_identical_markdown_events!(r##">		foo"##, r##">       foo"##);
 }
 
 #[test]
 fn gfm_markdown_tabs_7() {
     // https://github.github.com/gfm/#example-7
-    test_identical_markdown_events!(r##"-		foo"##,r##"-       foo"##);
+    test_identical_markdown_events!(r##"-		foo"##, r##"-       foo"##);
 }
 
 #[test]
 fn gfm_markdown_tabs_8() {
     // https://github.github.com/gfm/#example-8
-    test_identical_markdown_events!(r##"    foo
-	bar"##,r##"    foo
-    bar"##);
+    test_identical_markdown_events!(
+        r##"    foo
+	bar"##,
+        r##"    foo
+    bar"##
+    );
 }
 
 #[test]
 fn gfm_markdown_tabs_9() {
     // https://github.github.com/gfm/#example-9
-    test_identical_markdown_events!(r##" - foo
+    test_identical_markdown_events!(
+        r##" - foo
    - bar
-	 - baz"##,r##"- foo
+	 - baz"##,
+        r##"- foo
   - bar
-    - baz"##);
+    - baz"##
+    );
 }
 
 #[test]
 fn gfm_markdown_tabs_10() {
     // https://github.github.com/gfm/#example-10
-    test_identical_markdown_events!(r##"#	Foo"##,r##"# Foo"##);
+    test_identical_markdown_events!(r##"#	Foo"##, r##"# Foo"##);
 }
 
 #[test]
@@ -87,16 +103,20 @@ fn gfm_markdown_tabs_11() {
 #[test]
 fn gfm_markdown_precedence_12() {
     // https://github.github.com/gfm/#example-12
-    test_identical_markdown_events!(r##"- `one
-- two`"##);
+    test_identical_markdown_events!(
+        r##"- `one
+- two`"##
+    );
 }
 
 #[test]
 fn gfm_markdown_thematic_breaks_13() {
     // https://github.github.com/gfm/#example-13
-    test_identical_markdown_events!(r##"***
+    test_identical_markdown_events!(
+        r##"***
 ---
-___"##);
+___"##
+    );
 }
 
 #[test]
@@ -114,19 +134,24 @@ fn gfm_markdown_thematic_breaks_15() {
 #[test]
 fn gfm_markdown_thematic_breaks_16() {
     // https://github.github.com/gfm/#example-16
-    test_identical_markdown_events!(r##"--
+    test_identical_markdown_events!(
+        r##"--
 **
-__"##);
+__"##
+    );
 }
 
 #[test]
 fn gfm_markdown_thematic_breaks_17() {
     // https://github.github.com/gfm/#example-17
-    test_identical_markdown_events!(r##" ***
+    test_identical_markdown_events!(
+        r##" ***
   ***
-   ***"##,r##"***
+   ***"##,
+        r##"***
 ***
-***"##);
+***"##
+    );
 }
 
 #[test]
@@ -138,9 +163,12 @@ fn gfm_markdown_thematic_breaks_18() {
 #[test]
 fn gfm_markdown_thematic_breaks_19() {
     // https://github.github.com/gfm/#example-19
-    test!(r##"Foo
-    ***"##,r##"Foo
-\***"##);
+    test!(
+        r##"Foo
+    ***"##,
+        r##"Foo
+\***"##
+    );
 }
 
 #[test]
@@ -152,13 +180,13 @@ fn gfm_markdown_thematic_breaks_20() {
 #[test]
 fn gfm_markdown_thematic_breaks_21() {
     // https://github.github.com/gfm/#example-21
-    test_identical_markdown_events!(r##" - - -"##,r##"- - -"##);
+    test_identical_markdown_events!(r##" - - -"##, r##"- - -"##);
 }
 
 #[test]
 fn gfm_markdown_thematic_breaks_22() {
     // https://github.github.com/gfm/#example-22
-    test_identical_markdown_events!(r##" **  * ** * ** * **"##,r##"**  * ** * ** * **"##);
+    test_identical_markdown_events!(r##" **  * ** * ** * **"##, r##"**  * ** * ** * **"##);
 }
 
 #[test]
@@ -176,67 +204,81 @@ fn gfm_markdown_thematic_breaks_24() {
 #[test]
 fn gfm_markdown_thematic_breaks_25() {
     // https://github.github.com/gfm/#example-25
-    test_identical_markdown_events!(r##"_ _ _ _ a
+    test_identical_markdown_events!(
+        r##"_ _ _ _ a
 
 a------
 
----a---"##);
+---a---"##
+    );
 }
 
 #[test]
 fn gfm_markdown_thematic_breaks_26() {
     // https://github.github.com/gfm/#example-26
-    test_identical_markdown_events!(r##" *-*"##,r##"*-*"##);
+    test_identical_markdown_events!(r##" *-*"##, r##"*-*"##);
 }
 
 #[test]
 fn gfm_markdown_thematic_breaks_27() {
     // https://github.github.com/gfm/#example-27
-    test_identical_markdown_events!(r##"- foo
+    test_identical_markdown_events!(
+        r##"- foo
 ***
-- bar"##);
+- bar"##
+    );
 }
 
 #[test]
 fn gfm_markdown_thematic_breaks_28() {
     // https://github.github.com/gfm/#example-28
-    test_identical_markdown_events!(r##"Foo
+    test_identical_markdown_events!(
+        r##"Foo
 ***
-bar"##);
+bar"##
+    );
 }
 
 #[test]
 fn gfm_markdown_thematic_breaks_29() {
     // https://github.github.com/gfm/#example-29
-    test_identical_markdown_events!(r##"Foo
+    test_identical_markdown_events!(
+        r##"Foo
 ---
-bar"##);
+bar"##
+    );
 }
 
 #[test]
 fn gfm_markdown_thematic_breaks_30() {
     // https://github.github.com/gfm/#example-30
-    test_identical_markdown_events!(r##"* Foo
+    test_identical_markdown_events!(
+        r##"* Foo
 * * *
-* Bar"##);
+* Bar"##
+    );
 }
 
 #[test]
 fn gfm_markdown_thematic_breaks_31() {
     // https://github.github.com/gfm/#example-31
-    test_identical_markdown_events!(r##"- Foo
-- * * *"##);
+    test_identical_markdown_events!(
+        r##"- Foo
+- * * *"##
+    );
 }
 
 #[test]
 fn gfm_markdown_atx_headings_32() {
     // https://github.github.com/gfm/#example-32
-    test_identical_markdown_events!(r##"# foo
+    test_identical_markdown_events!(
+        r##"# foo
 ## foo
 ### foo
 #### foo
 ##### foo
-###### foo"##);
+###### foo"##
+    );
 }
 
 #[test]
@@ -248,9 +290,11 @@ fn gfm_markdown_atx_headings_33() {
 #[test]
 fn gfm_markdown_atx_headings_34() {
     // https://github.github.com/gfm/#example-34
-    test_identical_markdown_events!(r##"#5 bolt
+    test_identical_markdown_events!(
+        r##"#5 bolt
 
-#hashtag"##);
+#hashtag"##
+    );
 }
 
 #[test]
@@ -268,17 +312,20 @@ fn gfm_markdown_atx_headings_36() {
 #[test]
 fn gfm_markdown_atx_headings_37() {
     // https://github.github.com/gfm/#example-37
-    test_identical_markdown_events!("#                  foo                     ",r##"# foo"##);
+    test_identical_markdown_events!("#                  foo                     ", r##"# foo"##);
 }
 
 #[test]
 fn gfm_markdown_atx_headings_38() {
     // https://github.github.com/gfm/#example-38
-    test_identical_markdown_events!(r##" ### foo
+    test_identical_markdown_events!(
+        r##" ### foo
   ## foo
-   # foo"##,r##"### foo
+   # foo"##,
+        r##"### foo
 ## foo
-# foo"##);
+# foo"##
+    );
 }
 
 #[test]
@@ -290,31 +337,40 @@ fn gfm_markdown_atx_headings_39() {
 #[test]
 fn gfm_markdown_atx_headings_40() {
     // https://github.github.com/gfm/#example-40
-    test_identical_markdown_events!(r##"foo
-    # bar"##,r##"foo
-\# bar"##);
+    test_identical_markdown_events!(
+        r##"foo
+    # bar"##,
+        r##"foo
+\# bar"##
+    );
 }
 
 #[test]
 fn gfm_markdown_atx_headings_41() {
     // https://github.github.com/gfm/#example-41
-    test_identical_markdown_events!(r##"## foo ##
-  ###   bar    ###"##,r##"## foo
-### bar"##);
+    test_identical_markdown_events!(
+        r##"## foo ##
+  ###   bar    ###"##,
+        r##"## foo
+### bar"##
+    );
 }
 
 #[test]
 fn gfm_markdown_atx_headings_42() {
     // https://github.github.com/gfm/#example-42
-    test_identical_markdown_events!(r##"# foo ##################################
-##### foo ##"##,r##"# foo
-##### foo"##);
+    test_identical_markdown_events!(
+        r##"# foo ##################################
+##### foo ##"##,
+        r##"# foo
+##### foo"##
+    );
 }
 
 #[test]
 fn gfm_markdown_atx_headings_43() {
     // https://github.github.com/gfm/#example-43
-    test_identical_markdown_events!("### foo ###     ",r##"### foo"##);
+    test_identical_markdown_events!("### foo ###     ", r##"### foo"##);
 }
 
 #[test]
@@ -332,369 +388,464 @@ fn gfm_markdown_atx_headings_45() {
 #[test]
 fn gfm_markdown_atx_headings_46() {
     // https://github.github.com/gfm/#example-46
-    test_identical_markdown_events!(r##"### foo \###
+    test_identical_markdown_events!(
+        r##"### foo \###
 ## foo #\##
-# foo \#"##);
+# foo \#"##
+    );
 }
 
 #[test]
 fn gfm_markdown_atx_headings_47() {
     // https://github.github.com/gfm/#example-47
-    test_identical_markdown_events!(r##"****
+    test_identical_markdown_events!(
+        r##"****
 ## foo
-****"##);
+****"##
+    );
 }
 
 #[test]
 fn gfm_markdown_atx_headings_48() {
     // https://github.github.com/gfm/#example-48
-    test_identical_markdown_events!(r##"Foo bar
+    test_identical_markdown_events!(
+        r##"Foo bar
 # baz
-Bar foo"##);
+Bar foo"##
+    );
 }
 
 #[test]
 fn gfm_markdown_atx_headings_49() {
     // https://github.github.com/gfm/#example-49
-    test_identical_markdown_events!("## \n#\n### ###",r##"##
+    test_identical_markdown_events!(
+        "## \n#\n### ###",
+        r##"##
 #
-###"##);
+###"##
+    );
 }
 
 #[test]
 fn gfm_markdown_setext_headings_50() {
     // https://github.github.com/gfm/#example-50
-    test_identical_markdown_events!(r##"Foo *bar*
+    test_identical_markdown_events!(
+        r##"Foo *bar*
 =========
 
 Foo *bar*
----------"##);
+---------"##
+    );
 }
 
 #[test]
 fn gfm_markdown_setext_headings_51() {
     // https://github.github.com/gfm/#example-51
-    test_identical_markdown_events!(r##"Foo *bar
+    test_identical_markdown_events!(
+        r##"Foo *bar
 baz*
-===="##);
+===="##
+    );
 }
 
 #[test]
 fn gfm_markdown_setext_headings_52() {
     // https://github.github.com/gfm/#example-52
-    test_identical_markdown_events!("  Foo *bar\nbaz*\t\n====",r##"Foo *bar
+    test_identical_markdown_events!(
+        "  Foo *bar\nbaz*\t\n====",
+        r##"Foo *bar
 baz*
-===="##);
+===="##
+    );
 }
 
 #[test]
 fn gfm_markdown_setext_headings_53() {
     // https://github.github.com/gfm/#example-53
-    test_identical_markdown_events!(r##"Foo
+    test_identical_markdown_events!(
+        r##"Foo
 -------------------------
 
 Foo
-="##);
+="##
+    );
 }
 
 #[test]
 fn gfm_markdown_setext_headings_54() {
     // https://github.github.com/gfm/#example-54
-    test_identical_markdown_events!(r##"   Foo
+    test_identical_markdown_events!(
+        r##"   Foo
 ---
 
   Foo
 -----
 
   Foo
-  ==="##,r##"Foo
+  ==="##,
+        r##"Foo
 ---
 
 Foo
 -----
 
 Foo
-==="##);
+==="##
+    );
 }
 
 #[test]
 fn gfm_markdown_setext_headings_55() {
     // https://github.github.com/gfm/#example-55
-    test_identical_markdown_events!(r##"    Foo
+    test_identical_markdown_events!(
+        r##"    Foo
     ---
 
     Foo
----"##);
+---"##
+    );
 }
 
 #[test]
 fn gfm_markdown_setext_headings_56() {
     // https://github.github.com/gfm/#example-56
-    test_identical_markdown_events!("Foo\n   ----      ",r##"Foo
-----"##);
+    test_identical_markdown_events!(
+        "Foo\n   ----      ",
+        r##"Foo
+----"##
+    );
 }
 
 #[test]
 fn gfm_markdown_setext_headings_57() {
     // https://github.github.com/gfm/#example-57
-    test_identical_markdown_events!(r##"Foo
-    ---"##,r##"Foo
-\---"##);
+    test_identical_markdown_events!(
+        r##"Foo
+    ---"##,
+        r##"Foo
+\---"##
+    );
 }
 
 #[test]
 fn gfm_markdown_setext_headings_58() {
     // https://github.github.com/gfm/#example-58
-    test_identical_markdown_events!(r##"Foo
+    test_identical_markdown_events!(
+        r##"Foo
 = =
 
 Foo
---- -"##);
+--- -"##
+    );
 }
 
 #[test]
 fn gfm_markdown_setext_headings_59() {
     // https://github.github.com/gfm/#example-59
-    test_identical_markdown_events!("Foo  \n-----",r##"Foo
------"##);
+    test_identical_markdown_events!(
+        "Foo  \n-----",
+        r##"Foo
+-----"##
+    );
 }
 
 #[test]
 fn gfm_markdown_setext_headings_60() {
     // https://github.github.com/gfm/#example-60
-    test_identical_markdown_events!(r##"Foo\
-----"##);
+    test_identical_markdown_events!(
+        r##"Foo\
+----"##
+    );
 }
 
 #[test]
 fn gfm_markdown_setext_headings_61() {
     // https://github.github.com/gfm/#example-61
-    test_identical_markdown_events!(r##"`Foo
+    test_identical_markdown_events!(
+        r##"`Foo
 ----
 `
 
 <a title="a lot
 ---
-of dashes"/>"##);
+of dashes"/>"##
+    );
 }
 
 #[test]
 fn gfm_markdown_setext_headings_62() {
     // https://github.github.com/gfm/#example-62
-    test_identical_markdown_events!(r##"> Foo
----"##);
+    test_identical_markdown_events!(
+        r##"> Foo
+---"##
+    );
 }
 
 #[test]
 fn gfm_markdown_setext_headings_63() {
     // https://github.github.com/gfm/#example-63
-    test_identical_markdown_events!(r##"> foo
+    test_identical_markdown_events!(
+        r##"> foo
 bar
-==="##,r##"> foo
+==="##,
+        r##"> foo
 > bar
-> \==="##);
+> \==="##
+    );
 }
 
 #[test]
 fn gfm_markdown_setext_headings_64() {
     // https://github.github.com/gfm/#example-64
-    test_identical_markdown_events!(r##"- Foo
----"##);
+    test_identical_markdown_events!(
+        r##"- Foo
+---"##
+    );
 }
 
 #[test]
 fn gfm_markdown_setext_headings_65() {
     // https://github.github.com/gfm/#example-65
-    test_identical_markdown_events!(r##"Foo
+    test_identical_markdown_events!(
+        r##"Foo
 Bar
----"##);
+---"##
+    );
 }
 
 #[test]
 fn gfm_markdown_setext_headings_66() {
     // https://github.github.com/gfm/#example-66
-    test_identical_markdown_events!(r##"---
+    test_identical_markdown_events!(
+        r##"---
 Foo
 ---
 Bar
 ---
-Baz"##);
+Baz"##
+    );
 }
 
 #[test]
 fn gfm_markdown_setext_headings_67() {
     // https://github.github.com/gfm/#example-67
-    test_identical_markdown_events!(r##"
-===="##,r##"===="##);
+    test_identical_markdown_events!(
+        r##"
+===="##,
+        r##"===="##
+    );
 }
 
 #[test]
 fn gfm_markdown_setext_headings_68() {
     // https://github.github.com/gfm/#example-68
-    test_identical_markdown_events!(r##"---
----"##);
+    test_identical_markdown_events!(
+        r##"---
+---"##
+    );
 }
 
 #[test]
 fn gfm_markdown_setext_headings_69() {
     // https://github.github.com/gfm/#example-69
-    test_identical_markdown_events!(r##"- foo
------"##);
+    test_identical_markdown_events!(
+        r##"- foo
+-----"##
+    );
 }
 
 #[test]
 fn gfm_markdown_setext_headings_70() {
     // https://github.github.com/gfm/#example-70
-    test_identical_markdown_events!(r##"    foo
----"##);
+    test_identical_markdown_events!(
+        r##"    foo
+---"##
+    );
 }
 
 #[test]
 fn gfm_markdown_setext_headings_71() {
     // https://github.github.com/gfm/#example-71
-    test_identical_markdown_events!(r##"> foo
------"##);
+    test_identical_markdown_events!(
+        r##"> foo
+-----"##
+    );
 }
 
 #[test]
 fn gfm_markdown_setext_headings_72() {
     // https://github.github.com/gfm/#example-72
-    test_identical_markdown_events!(r##"\> foo
-------"##);
+    test_identical_markdown_events!(
+        r##"\> foo
+------"##
+    );
 }
 
 #[test]
 fn gfm_markdown_setext_headings_73() {
     // https://github.github.com/gfm/#example-73
-    test_identical_markdown_events!(r##"Foo
+    test_identical_markdown_events!(
+        r##"Foo
 
 bar
 ---
-baz"##);
+baz"##
+    );
 }
 
 #[test]
 fn gfm_markdown_setext_headings_74() {
     // https://github.github.com/gfm/#example-74
-    test_identical_markdown_events!(r##"Foo
+    test_identical_markdown_events!(
+        r##"Foo
 bar
 
 ---
 
-baz"##);
+baz"##
+    );
 }
 
 #[test]
 fn gfm_markdown_setext_headings_75() {
     // https://github.github.com/gfm/#example-75
-    test_identical_markdown_events!(r##"Foo
+    test_identical_markdown_events!(
+        r##"Foo
 bar
 * * *
-baz"##);
+baz"##
+    );
 }
 
 #[test]
 fn gfm_markdown_setext_headings_76() {
     // https://github.github.com/gfm/#example-76
-    test_identical_markdown_events!(r##"Foo
+    test_identical_markdown_events!(
+        r##"Foo
 bar
 \---
-baz"##);
+baz"##
+    );
 }
 
 #[test]
 fn gfm_markdown_indented_code_blocks_77() {
     // https://github.github.com/gfm/#example-77
-    test_identical_markdown_events!(r##"    a simple
-      indented code block"##);
+    test_identical_markdown_events!(
+        r##"    a simple
+      indented code block"##
+    );
 }
 
 #[test]
 fn gfm_markdown_indented_code_blocks_78() {
     // https://github.github.com/gfm/#example-78
-    test_identical_markdown_events!(r##"  - foo
+    test_identical_markdown_events!(
+        r##"  - foo
 
-    bar"##,r##"- foo
+    bar"##,
+        r##"- foo
 
-  bar"##);
+  bar"##
+    );
 }
 
 #[test]
 fn gfm_markdown_indented_code_blocks_79() {
     // https://github.github.com/gfm/#example-79
-    test_identical_markdown_events!(r##"1.  foo
+    test_identical_markdown_events!(
+        r##"1.  foo
 
-    - bar"##,r##"1. foo
+    - bar"##,
+        r##"1. foo
 
-   - bar"##);
+   - bar"##
+    );
 }
 
 #[test]
 fn gfm_markdown_indented_code_blocks_80() {
     // https://github.github.com/gfm/#example-80
-    test_identical_markdown_events!(r##"    <a/>
+    test_identical_markdown_events!(
+        r##"    <a/>
     *hi*
 
-    - one"##);
+    - one"##
+    );
 }
 
 #[test]
 fn gfm_markdown_indented_code_blocks_81() {
     // https://github.github.com/gfm/#example-81
-    test_identical_markdown_events!("    chunk1\n\n    chunk2\n  \n \n \n    chunk3",r##"    chunk1
+    test_identical_markdown_events!(
+        "    chunk1\n\n    chunk2\n  \n \n \n    chunk3",
+        r##"    chunk1
 
     chunk2
 
 
 
-    chunk3"##);
+    chunk3"##
+    );
 }
 
 #[test]
 fn gfm_markdown_indented_code_blocks_82() {
     // https://github.github.com/gfm/#example-82
-    test_identical_markdown_events!("    chunk1\n      \n      chunk2",r##"    chunk1
+    test_identical_markdown_events!(
+        "    chunk1\n      \n      chunk2",
+        r##"    chunk1
 
-      chunk2"##);
+      chunk2"##
+    );
 }
 
 #[test]
 fn gfm_markdown_indented_code_blocks_83() {
     // https://github.github.com/gfm/#example-83
-    test_identical_markdown_events!(r##"Foo
-    bar"##,r##"Foo
-bar"##);
+    test_identical_markdown_events!(
+        r##"Foo
+    bar"##,
+        r##"Foo
+bar"##
+    );
 }
 
 #[test]
 fn gfm_markdown_indented_code_blocks_84() {
     // https://github.github.com/gfm/#example-84
-    test_identical_markdown_events!(r##"    foo
-bar"##);
+    test_identical_markdown_events!(
+        r##"    foo
+bar"##
+    );
 }
 
 #[test]
 fn gfm_markdown_indented_code_blocks_85() {
     // https://github.github.com/gfm/#example-85
-    test_identical_markdown_events!(r##"# Heading
+    test_identical_markdown_events!(
+        r##"# Heading
     foo
 Heading
 ------
     foo
-----"##);
+----"##
+    );
 }
 
 #[test]
 fn gfm_markdown_indented_code_blocks_86() {
     // https://github.github.com/gfm/#example-86
-    test_identical_markdown_events!(r##"        foo
-    bar"##);
+    test_identical_markdown_events!(
+        r##"        foo
+    bar"##
+    );
 }
 
 #[test]
 fn gfm_markdown_indented_code_blocks_87() {
     // https://github.github.com/gfm/#example-87
-    test_identical_markdown_events!("\n    \n    foo\n    ","\n\n    foo");
+    test_identical_markdown_events!("\n    \n    foo\n    ", "\n\n    foo");
 }
 
 #[test]
@@ -706,303 +857,374 @@ fn gfm_markdown_indented_code_blocks_88() {
 #[test]
 fn gfm_markdown_fenced_code_blocks_89() {
     // https://github.github.com/gfm/#example-89
-    test_identical_markdown_events!(r##"```
+    test_identical_markdown_events!(
+        r##"```
 <
  >
-```"##);
+```"##
+    );
 }
 
 #[test]
 fn gfm_markdown_fenced_code_blocks_90() {
     // https://github.github.com/gfm/#example-90
-    test_identical_markdown_events!(r##"~~~
+    test_identical_markdown_events!(
+        r##"~~~
 <
  >
-~~~"##);
+~~~"##
+    );
 }
 
 #[test]
 fn gfm_markdown_fenced_code_blocks_91() {
     // https://github.github.com/gfm/#example-91
-    test_identical_markdown_events!(r##"``
+    test_identical_markdown_events!(
+        r##"``
 foo
-``"##);
+``"##
+    );
 }
 
 #[test]
 fn gfm_markdown_fenced_code_blocks_92() {
     // https://github.github.com/gfm/#example-92
-    test_identical_markdown_events!(r##"```
+    test_identical_markdown_events!(
+        r##"```
 aaa
 ~~~
-```"##);
+```"##
+    );
 }
 
 #[test]
 fn gfm_markdown_fenced_code_blocks_93() {
     // https://github.github.com/gfm/#example-93
-    test_identical_markdown_events!(r##"~~~
+    test_identical_markdown_events!(
+        r##"~~~
 aaa
 ```
-~~~"##);
+~~~"##
+    );
 }
 
 #[test]
 fn gfm_markdown_fenced_code_blocks_94() {
     // https://github.github.com/gfm/#example-94
-    test_identical_markdown_events!(r##"````
+    test_identical_markdown_events!(
+        r##"````
 aaa
 ```
-``````"##,r##"````
+``````"##,
+        r##"````
 aaa
 ```
-````"##);
+````"##
+    );
 }
 
 #[test]
 fn gfm_markdown_fenced_code_blocks_95() {
     // https://github.github.com/gfm/#example-95
-    test_identical_markdown_events!(r##"~~~~
+    test_identical_markdown_events!(
+        r##"~~~~
 aaa
 ~~~
-~~~~"##);
+~~~~"##
+    );
 }
 
 #[test]
 fn gfm_markdown_fenced_code_blocks_96() {
     // https://github.github.com/gfm/#example-96
-    test_identical_markdown_events!(r##"```"##,r##"```
-```"##);
+    test_identical_markdown_events!(
+        r##"```"##,
+        r##"```
+```"##
+    );
 }
 
 #[test]
 fn gfm_markdown_fenced_code_blocks_97() {
     // https://github.github.com/gfm/#example-97
-    test_identical_markdown_events!(r##"`````
+    test_identical_markdown_events!(
+        r##"`````
 
 ```
-aaa"##,r##"`````
+aaa"##,
+        r##"`````
 
 ```
 aaa
-`````"##);
+`````"##
+    );
 }
 
 #[test]
 fn gfm_markdown_fenced_code_blocks_98() {
     // https://github.github.com/gfm/#example-98
-    test_identical_markdown_events!(r##"> ```
+    test_identical_markdown_events!(
+        r##"> ```
 > aaa
 
-bbb"##,r##"> ```
+bbb"##,
+        r##"> ```
 > aaa
 > ```
 
-bbb"##);
+bbb"##
+    );
 }
 
 #[test]
 fn gfm_markdown_fenced_code_blocks_99() {
     // https://github.github.com/gfm/#example-99
-    test_identical_markdown_events!("```\n\n  \n```","```\n\n\n```");
+    test_identical_markdown_events!("```\n\n  \n```", "```\n\n\n```");
 }
 
 #[test]
 fn gfm_markdown_fenced_code_blocks_100() {
     // https://github.github.com/gfm/#example-100
-    test_identical_markdown_events!(r##"```
-```"##);
+    test_identical_markdown_events!(
+        r##"```
+```"##
+    );
 }
 
 #[test]
 fn gfm_markdown_fenced_code_blocks_101() {
     // https://github.github.com/gfm/#example-101
-    test_identical_markdown_events!(r##" ```
+    test_identical_markdown_events!(
+        r##" ```
  aaa
 aaa
-```"##,r##"```
+```"##,
+        r##"```
 aaa
 aaa
-```"##);
+```"##
+    );
 }
 
 #[test]
 fn gfm_markdown_fenced_code_blocks_102() {
     // https://github.github.com/gfm/#example-102
-    test!(r##"  ```
+    test!(
+        r##"  ```
 aaa
   aaa
 aaa
-  ```"##,r##"```
+  ```"##,
+        r##"```
 aaa
 aaa
 aaa
-```"##);
+```"##
+    );
 }
 
 #[test]
 fn gfm_markdown_fenced_code_blocks_103() {
     // https://github.github.com/gfm/#example-103
-    test!(r##"   ```
+    test!(
+        r##"   ```
    aaa
     aaa
   aaa
-   ```"##,r##"```
+   ```"##,
+        r##"```
 aaa
  aaa
 aaa
-```"##);
+```"##
+    );
 }
 
 #[test]
 fn gfm_markdown_fenced_code_blocks_104() {
     // https://github.github.com/gfm/#example-104
-    test_identical_markdown_events!(r##"    ```
+    test_identical_markdown_events!(
+        r##"    ```
     aaa
-    ```"##);
+    ```"##
+    );
 }
 
 #[test]
 fn gfm_markdown_fenced_code_blocks_105() {
     // https://github.github.com/gfm/#example-105
-    test_identical_markdown_events!(r##"```
+    test_identical_markdown_events!(
+        r##"```
 aaa
-  ```"##,r##"```
+  ```"##,
+        r##"```
 aaa
-```"##);
+```"##
+    );
 }
 
 #[test]
 fn gfm_markdown_fenced_code_blocks_106() {
     // https://github.github.com/gfm/#example-106
-    test_identical_markdown_events!(r##"   ```
+    test_identical_markdown_events!(
+        r##"   ```
 aaa
-  ```"##,r##"```
+  ```"##,
+        r##"```
 aaa
-```"##);
+```"##
+    );
 }
 
 #[test]
 fn gfm_markdown_fenced_code_blocks_107() {
     // https://github.github.com/gfm/#example-107
-    test_identical_markdown_events!(r##"```
+    test_identical_markdown_events!(
+        r##"```
 aaa
-    ```"##,r##"```
+    ```"##,
+        r##"```
 aaa
     ```
-```"##);
+```"##
+    );
 }
 
 #[test]
 fn gfm_markdown_fenced_code_blocks_108() {
     // https://github.github.com/gfm/#example-108
-    test_identical_markdown_events!(r##"``` ```
-aaa"##);
+    test_identical_markdown_events!(
+        r##"``` ```
+aaa"##
+    );
 }
 
 #[test]
 fn gfm_markdown_fenced_code_blocks_109() {
     // https://github.github.com/gfm/#example-109
-    test_identical_markdown_events!(r##"~~~~~~
+    test_identical_markdown_events!(
+        r##"~~~~~~
 aaa
-~~~ ~~"##,r##"~~~~~~
+~~~ ~~"##,
+        r##"~~~~~~
 aaa
 ~~~ ~~
-~~~~~~"##);
+~~~~~~"##
+    );
 }
 
 #[test]
 fn gfm_markdown_fenced_code_blocks_110() {
     // https://github.github.com/gfm/#example-110
-    test_identical_markdown_events!(r##"foo
+    test_identical_markdown_events!(
+        r##"foo
 ```
 bar
 ```
-baz"##);
+baz"##
+    );
 }
 
 #[test]
 fn gfm_markdown_fenced_code_blocks_111() {
     // https://github.github.com/gfm/#example-111
-    test_identical_markdown_events!(r##"foo
+    test_identical_markdown_events!(
+        r##"foo
 ---
 ~~~
 bar
 ~~~
-# baz"##);
+# baz"##
+    );
 }
 
 #[test]
 fn gfm_markdown_fenced_code_blocks_112() {
     // https://github.github.com/gfm/#example-112
-    test_identical_markdown_events!(r##"```ruby
+    test_identical_markdown_events!(
+        r##"```ruby
 def foo(x)
   return 3
 end
-```"##);
+```"##
+    );
 }
 
 #[test]
 fn gfm_markdown_fenced_code_blocks_113() {
     // https://github.github.com/gfm/#example-113
-    test_identical_markdown_events!(r##"~~~~    ruby startline=3 $%@#$
+    test_identical_markdown_events!(
+        r##"~~~~    ruby startline=3 $%@#$
 def foo(x)
   return 3
 end
-~~~~~~~"##,r##"~~~~ ruby startline=3 $%@#$
+~~~~~~~"##,
+        r##"~~~~ ruby startline=3 $%@#$
 def foo(x)
   return 3
 end
-~~~~"##);
+~~~~"##
+    );
 }
 
 #[test]
 fn gfm_markdown_fenced_code_blocks_114() {
     // https://github.github.com/gfm/#example-114
-    test_identical_markdown_events!(r##"````;
-````"##);
+    test_identical_markdown_events!(
+        r##"````;
+````"##
+    );
 }
 
 #[test]
 fn gfm_markdown_fenced_code_blocks_115() {
     // https://github.github.com/gfm/#example-115
-    test_identical_markdown_events!(r##"``` aa ```
-foo"##);
+    test_identical_markdown_events!(
+        r##"``` aa ```
+foo"##
+    );
 }
 
 #[test]
 fn gfm_markdown_fenced_code_blocks_116() {
     // https://github.github.com/gfm/#example-116
-    test_identical_markdown_events!(r##"~~~ aa ``` ~~~
+    test_identical_markdown_events!(
+        r##"~~~ aa ``` ~~~
 foo
-~~~"##);
+~~~"##
+    );
 }
 
 #[test]
 fn gfm_markdown_fenced_code_blocks_117() {
     // https://github.github.com/gfm/#example-117
-    test_identical_markdown_events!(r##"```
+    test_identical_markdown_events!(
+        r##"```
 ``` aaa
-```"##);
+```"##
+    );
 }
 
 #[test]
 fn gfm_markdown_html_blocks_118() {
     // https://github.github.com/gfm/#example-118
-    test_identical_markdown_events!(r##"<table><tr><td>
+    test_identical_markdown_events!(
+        r##"<table><tr><td>
 <pre>
 **Hello**,
 
 _world_.
 </pre>
-</td></tr></table>"##);
+</td></tr></table>"##
+    );
 }
 
 #[test]
 #[ignore]
 fn gfm_markdown_html_blocks_119() {
     // https://github.github.com/gfm/#example-119
-    test_identical_markdown_events!(r##"<table>
+    test_identical_markdown_events!(
+        r##"<table>
   <tr>
     <td>
            hi
@@ -1010,83 +1232,103 @@ fn gfm_markdown_html_blocks_119() {
   </tr>
 </table>
 
-okay."##);
+okay."##
+    );
 }
 
 #[test]
 #[ignore]
 fn gfm_markdown_html_blocks_120() {
     // https://github.github.com/gfm/#example-120
-    test_identical_markdown_events!(r##" <div>
+    test_identical_markdown_events!(
+        r##" <div>
   *hello*
-         <foo><a>"##,r##"<div>
+         <foo><a>"##,
+        r##"<div>
   *hello*
-         <foo><a>"##);
+         <foo><a>"##
+    );
 }
 
 #[test]
 fn gfm_markdown_html_blocks_121() {
     // https://github.github.com/gfm/#example-121
-    test_identical_markdown_events!(r##"</div>
-*foo*"##);
+    test_identical_markdown_events!(
+        r##"</div>
+*foo*"##
+    );
 }
 
 #[test]
 fn gfm_markdown_html_blocks_122() {
     // https://github.github.com/gfm/#example-122
-    test_identical_markdown_events!(r##"<DIV CLASS="foo">
+    test_identical_markdown_events!(
+        r##"<DIV CLASS="foo">
 
 *Markdown*
 
-</DIV>"##);
+</DIV>"##
+    );
 }
 
 #[test]
 #[ignore]
 fn gfm_markdown_html_blocks_123() {
     // https://github.github.com/gfm/#example-123
-    test_identical_markdown_events!(r##"<div id="foo"
+    test_identical_markdown_events!(
+        r##"<div id="foo"
   class="bar">
-</div>"##);
+</div>"##
+    );
 }
 
 #[test]
 #[ignore]
 fn gfm_markdown_html_blocks_124() {
     // https://github.github.com/gfm/#example-124
-    test_identical_markdown_events!(r##"<div id="foo" class="bar
+    test_identical_markdown_events!(
+        r##"<div id="foo" class="bar
   baz">
-</div>"##);
+</div>"##
+    );
 }
 
 #[test]
 fn gfm_markdown_html_blocks_125() {
     // https://github.github.com/gfm/#example-125
-    test_identical_markdown_events!(r##"<div>
+    test_identical_markdown_events!(
+        r##"<div>
 *foo*
 
-*bar*"##);
+*bar*"##
+    );
 }
 
 #[test]
 fn gfm_markdown_html_blocks_126() {
     // https://github.github.com/gfm/#example-126
-    test_identical_markdown_events!(r##"<div id="foo"
-*hi*"##);
+    test_identical_markdown_events!(
+        r##"<div id="foo"
+*hi*"##
+    );
 }
 
 #[test]
 fn gfm_markdown_html_blocks_127() {
     // https://github.github.com/gfm/#example-127
-    test_identical_markdown_events!(r##"<div class
-foo"##);
+    test_identical_markdown_events!(
+        r##"<div class
+foo"##
+    );
 }
 
 #[test]
 fn gfm_markdown_html_blocks_128() {
     // https://github.github.com/gfm/#example-128
-    test_identical_markdown_events!(r##"<div *???-&&&-<---
-*foo*"##);
+    test_identical_markdown_events!(
+        r##"<div *???-&&&-<---
+*foo*"##
+    );
 }
 
 #[test]
@@ -1098,67 +1340,83 @@ fn gfm_markdown_html_blocks_129() {
 #[test]
 fn gfm_markdown_html_blocks_130() {
     // https://github.github.com/gfm/#example-130
-    test_identical_markdown_events!(r##"<table><tr><td>
+    test_identical_markdown_events!(
+        r##"<table><tr><td>
 foo
-</td></tr></table>"##);
+</td></tr></table>"##
+    );
 }
 
 #[test]
 fn gfm_markdown_html_blocks_131() {
     // https://github.github.com/gfm/#example-131
-    test_identical_markdown_events!(r##"<div></div>
+    test_identical_markdown_events!(
+        r##"<div></div>
 ``` c
 int x = 33;
-```"##);
+```"##
+    );
 }
 
 #[test]
 fn gfm_markdown_html_blocks_132() {
     // https://github.github.com/gfm/#example-132
-    test_identical_markdown_events!(r##"<a href="foo">
+    test_identical_markdown_events!(
+        r##"<a href="foo">
 *bar*
-</a>"##);
+</a>"##
+    );
 }
 
 #[test]
 fn gfm_markdown_html_blocks_133() {
     // https://github.github.com/gfm/#example-133
-    test_identical_markdown_events!(r##"<Warning>
+    test_identical_markdown_events!(
+        r##"<Warning>
 *bar*
-</Warning>"##);
+</Warning>"##
+    );
 }
 
 #[test]
 fn gfm_markdown_html_blocks_134() {
     // https://github.github.com/gfm/#example-134
-    test_identical_markdown_events!(r##"<i class="foo">
+    test_identical_markdown_events!(
+        r##"<i class="foo">
 *bar*
-</i>"##);
+</i>"##
+    );
 }
 
 #[test]
 fn gfm_markdown_html_blocks_135() {
     // https://github.github.com/gfm/#example-135
-    test_identical_markdown_events!(r##"</ins>
-*bar*"##);
+    test_identical_markdown_events!(
+        r##"</ins>
+*bar*"##
+    );
 }
 
 #[test]
 fn gfm_markdown_html_blocks_136() {
     // https://github.github.com/gfm/#example-136
-    test_identical_markdown_events!(r##"<del>
+    test_identical_markdown_events!(
+        r##"<del>
 *foo*
-</del>"##);
+</del>"##
+    );
 }
 
 #[test]
 fn gfm_markdown_html_blocks_137() {
     // https://github.github.com/gfm/#example-137
-    test_identical_markdown_events!(r##"<del>
+    test_identical_markdown_events!(
+        r##"<del>
 
 *foo*
 
-</del>"##);
+</del>"##
+    );
 }
 
 #[test]
@@ -1170,108 +1428,130 @@ fn gfm_markdown_html_blocks_138() {
 #[test]
 fn gfm_markdown_html_blocks_139() {
     // https://github.github.com/gfm/#example-139
-    test_identical_markdown_events!(r##"<pre language="haskell"><code>
+    test_identical_markdown_events!(
+        r##"<pre language="haskell"><code>
 import Text.HTML.TagSoup
 
 main :: IO ()
 main = print $ parseTags tags
 </code></pre>
-okay"##);
+okay"##
+    );
 }
 
 #[test]
 fn gfm_markdown_html_blocks_140() {
     // https://github.github.com/gfm/#example-140
-    test_identical_markdown_events!(r##"<script type="text/javascript">
+    test_identical_markdown_events!(
+        r##"<script type="text/javascript">
 // JavaScript example
 
 document.getElementById("demo").innerHTML = "Hello JavaScript!";
 </script>
-okay"##);
+okay"##
+    );
 }
 
 #[test]
 #[ignore]
 fn gfm_markdown_html_blocks_141() {
     // https://github.github.com/gfm/#example-141
-    test_identical_markdown_events!(r##"<style
+    test_identical_markdown_events!(
+        r##"<style
   type="text/css">
 h1 {color:red;}
 
 p {color:blue;}
 </style>
-okay"##);
+okay"##
+    );
 }
 
 #[test]
 #[ignore]
 fn gfm_markdown_html_blocks_142() {
     // https://github.github.com/gfm/#example-142
-    test_identical_markdown_events!(r##"<style
+    test_identical_markdown_events!(
+        r##"<style
   type="text/css">
 
-foo"##);
+foo"##
+    );
 }
 
 #[test]
 fn gfm_markdown_html_blocks_143() {
     // https://github.github.com/gfm/#example-143
-    test_identical_markdown_events!(r##"> <div>
+    test_identical_markdown_events!(
+        r##"> <div>
 > foo
 
-bar"##);
+bar"##
+    );
 }
 
 #[test]
 fn gfm_markdown_html_blocks_144() {
     // https://github.github.com/gfm/#example-144
-    test_identical_markdown_events!(r##"- <div>
-- foo"##);
+    test_identical_markdown_events!(
+        r##"- <div>
+- foo"##
+    );
 }
 
 #[test]
 fn gfm_markdown_html_blocks_145() {
     // https://github.github.com/gfm/#example-145
-    test_identical_markdown_events!(r##"<style>p{color:red;}</style>
-*foo*"##);
+    test_identical_markdown_events!(
+        r##"<style>p{color:red;}</style>
+*foo*"##
+    );
 }
 
 #[test]
 fn gfm_markdown_html_blocks_146() {
     // https://github.github.com/gfm/#example-146
-    test_identical_markdown_events!(r##"<!-- foo -->*bar*
-*baz*"##);
+    test_identical_markdown_events!(
+        r##"<!-- foo -->*bar*
+*baz*"##
+    );
 }
 
 #[test]
 fn gfm_markdown_html_blocks_147() {
     // https://github.github.com/gfm/#example-147
-    test_identical_markdown_events!(r##"<script>
+    test_identical_markdown_events!(
+        r##"<script>
 foo
-</script>1. *bar*"##);
+</script>1. *bar*"##
+    );
 }
 
 #[test]
 #[ignore]
 fn gfm_markdown_html_blocks_148() {
     // https://github.github.com/gfm/#example-148
-    test_identical_markdown_events!(r##"<!-- Foo
+    test_identical_markdown_events!(
+        r##"<!-- Foo
 
 bar
    baz -->
-okay"##);
+okay"##
+    );
 }
 
 #[test]
 #[ignore]
 fn gfm_markdown_html_blocks_149() {
     // https://github.github.com/gfm/#example-149
-    test_identical_markdown_events!(r##"<?php
+    test_identical_markdown_events!(
+        r##"<?php
 
   echo '>';
 
 ?>
-okay"##);
+okay"##
+    );
 }
 
 #[test]
@@ -1284,7 +1564,8 @@ fn gfm_markdown_html_blocks_150() {
 #[ignore]
 fn gfm_markdown_html_blocks_151() {
     // https://github.github.com/gfm/#example-151
-    test_identical_markdown_events!(r##"<![CDATA[
+    test_identical_markdown_events!(
+        r##"<![CDATA[
 function matchwo(a,b)
 {
   if (a < b && a < 0) then {
@@ -1296,77 +1577,95 @@ function matchwo(a,b)
   }
 }
 ]]>
-okay"##);
+okay"##
+    );
 }
 
 #[test]
 fn gfm_markdown_html_blocks_152() {
     // https://github.github.com/gfm/#example-152
-    test_identical_markdown_events!(r##"  <!-- foo -->
+    test_identical_markdown_events!(
+        r##"  <!-- foo -->
 
-    <!-- foo -->"##,r##"<!-- foo -->
+    <!-- foo -->"##,
+        r##"<!-- foo -->
 
-    <!-- foo -->"##);
+    <!-- foo -->"##
+    );
 }
 
 #[test]
 fn gfm_markdown_html_blocks_153() {
     // https://github.github.com/gfm/#example-153
-    test_identical_markdown_events!(r##"  <div>
+    test_identical_markdown_events!(
+        r##"  <div>
 
-    <div>"##,r##"<div>
+    <div>"##,
+        r##"<div>
 
-    <div>"##);
+    <div>"##
+    );
 }
 
 #[test]
 fn gfm_markdown_html_blocks_154() {
     // https://github.github.com/gfm/#example-154
-    test_identical_markdown_events!(r##"Foo
+    test_identical_markdown_events!(
+        r##"Foo
 <div>
 bar
-</div>"##);
+</div>"##
+    );
 }
 
 #[test]
 fn gfm_markdown_html_blocks_155() {
     // https://github.github.com/gfm/#example-155
-    test_identical_markdown_events!(r##"<div>
+    test_identical_markdown_events!(
+        r##"<div>
 bar
 </div>
-*foo*"##);
+*foo*"##
+    );
 }
 
 #[test]
 fn gfm_markdown_html_blocks_156() {
     // https://github.github.com/gfm/#example-156
-    test_identical_markdown_events!(r##"Foo
+    test_identical_markdown_events!(
+        r##"Foo
 <a href="bar">
-baz"##);
+baz"##
+    );
 }
 
 #[test]
 fn gfm_markdown_html_blocks_157() {
     // https://github.github.com/gfm/#example-157
-    test_identical_markdown_events!(r##"<div>
+    test_identical_markdown_events!(
+        r##"<div>
 
 *Emphasized* text.
 
-</div>"##);
+</div>"##
+    );
 }
 
 #[test]
 fn gfm_markdown_html_blocks_158() {
     // https://github.github.com/gfm/#example-158
-    test_identical_markdown_events!(r##"<div>
+    test_identical_markdown_events!(
+        r##"<div>
 *Emphasized* text.
-</div>"##);
+</div>"##
+    );
 }
 
 #[test]
 fn gfm_markdown_html_blocks_159() {
     // https://github.github.com/gfm/#example-159
-    test_identical_markdown_events!(r##"<table>
+    test_identical_markdown_events!(
+        r##"<table>
 
 <tr>
 
@@ -1376,13 +1675,15 @@ Hi
 
 </tr>
 
-</table>"##);
+</table>"##
+    );
 }
 
 #[test]
 fn gfm_markdown_html_blocks_160() {
     // https://github.github.com/gfm/#example-160
-    test_identical_markdown_events!(r##"<table>
+    test_identical_markdown_events!(
+        r##"<table>
 
   <tr>
 
@@ -1392,7 +1693,8 @@ fn gfm_markdown_html_blocks_160() {
 
   </tr>
 
-</table>"##,r##"<table>
+</table>"##,
+        r##"<table>
 
 <tr>
 
@@ -1402,159 +1704,200 @@ fn gfm_markdown_html_blocks_160() {
 
 </tr>
 
-</table>"##);
+</table>"##
+    );
 }
 
 #[test]
 fn gfm_markdown_link_reference_definitions_161() {
     // https://github.github.com/gfm/#example-161
-    test_identical_markdown_events!(r##"[foo]: /url "title"
+    test_identical_markdown_events!(
+        r##"[foo]: /url "title"
 
-[foo]"##);
+[foo]"##
+    );
 }
 
 #[test]
 fn gfm_markdown_link_reference_definitions_162() {
     // https://github.github.com/gfm/#example-162
-    test_identical_markdown_events!("   [foo]: \n      /url  \n           'the title'  \n\n[foo]",r##"[foo]: /url 'the title'
+    test_identical_markdown_events!(
+        "   [foo]: \n      /url  \n           'the title'  \n\n[foo]",
+        r##"[foo]: /url 'the title'
 
-[foo]"##);
+[foo]"##
+    );
 }
 
 #[test]
 fn gfm_markdown_link_reference_definitions_163() {
     // https://github.github.com/gfm/#example-163
-    test_identical_markdown_events!(r##"[Foo*bar\]]:my_(url) 'title (with parens)'
+    test_identical_markdown_events!(
+        r##"[Foo*bar\]]:my_(url) 'title (with parens)'
 
-[Foo*bar\]]"##,r##"[Foo*bar\]]: my_(url) 'title (with parens)'
+[Foo*bar\]]"##,
+        r##"[Foo*bar\]]: my_(url) 'title (with parens)'
 
-[Foo*bar\]]"##);
+[Foo*bar\]]"##
+    );
 }
 
 #[test]
 fn gfm_markdown_link_reference_definitions_164() {
     // https://github.github.com/gfm/#example-164
-    test_identical_markdown_events!(r##"[Foo bar]:
+    test_identical_markdown_events!(
+        r##"[Foo bar]:
 <my url>
 'title'
 
-[Foo bar]"##,r##"[Foo bar]: <my url> 'title'
+[Foo bar]"##,
+        r##"[Foo bar]: <my url> 'title'
 
-[Foo bar]"##);
+[Foo bar]"##
+    );
 }
 
 #[test]
 fn gfm_markdown_link_reference_definitions_165() {
     // https://github.github.com/gfm/#example-165
-    test_identical_markdown_events!(r##"[foo]: /url '
+    test_identical_markdown_events!(
+        r##"[foo]: /url '
 title
 line1
 line2
 '
 
-[foo]"##,r##"[foo]: /url '
+[foo]"##,
+        r##"[foo]: /url '
 title
 line1
 line2
 '
 
-[foo]"##);
+[foo]"##
+    );
 }
 
 #[test]
 fn gfm_markdown_link_reference_definitions_166() {
     // https://github.github.com/gfm/#example-166
-    test_identical_markdown_events!(r##"[foo]: /url 'title
+    test_identical_markdown_events!(
+        r##"[foo]: /url 'title
 
 with blank line'
 
-[foo]"##);
+[foo]"##
+    );
 }
 
 #[test]
 fn gfm_markdown_link_reference_definitions_167() {
     // https://github.github.com/gfm/#example-167
-    test_identical_markdown_events!(r##"[foo]:
+    test_identical_markdown_events!(
+        r##"[foo]:
 /url
 
-[foo]"##,r##"[foo]: /url
+[foo]"##,
+        r##"[foo]: /url
 
-[foo]"##);
+[foo]"##
+    );
 }
 
 #[test]
 fn gfm_markdown_link_reference_definitions_168() {
     // https://github.github.com/gfm/#example-168
-    test_identical_markdown_events!(r##"[foo]:
+    test_identical_markdown_events!(
+        r##"[foo]:
 
-[foo]"##);
+[foo]"##
+    );
 }
 
 #[test]
 fn gfm_markdown_link_reference_definitions_169() {
     // https://github.github.com/gfm/#example-169
-    test_identical_markdown_events!(r##"[foo]: <>
+    test_identical_markdown_events!(
+        r##"[foo]: <>
 
-[foo]"##,r##"[foo]: <>
+[foo]"##,
+        r##"[foo]: <>
 
-[foo]"##);
+[foo]"##
+    );
 }
 
 #[test]
 fn gfm_markdown_link_reference_definitions_170() {
     // https://github.github.com/gfm/#example-170
-    test_identical_markdown_events!(r##"[foo]: <bar>(baz)
+    test_identical_markdown_events!(
+        r##"[foo]: <bar>(baz)
 
-[foo]"##);
+[foo]"##
+    );
 }
 
 #[test]
 fn gfm_markdown_link_reference_definitions_171() {
     // https://github.github.com/gfm/#example-171
-    test_identical_markdown_events!(r##"[foo]: /url\bar\*baz "foo\"bar\baz"
+    test_identical_markdown_events!(
+        r##"[foo]: /url\bar\*baz "foo\"bar\baz"
 
-[foo]"##,r##"[foo]: /url\bar\*baz "foo\"bar\baz"
+[foo]"##,
+        r##"[foo]: /url\bar\*baz "foo\"bar\baz"
 
-[foo]"##);
+[foo]"##
+    );
 }
 
 #[test]
 fn gfm_markdown_link_reference_definitions_172() {
     // https://github.github.com/gfm/#example-172
-    test_identical_markdown_events!(r##"[foo]
+    test_identical_markdown_events!(
+        r##"[foo]
 
-[foo]: url"##);
+[foo]: url"##
+    );
 }
 
 #[test]
 fn gfm_markdown_link_reference_definitions_173() {
     // https://github.github.com/gfm/#example-173
-    test_identical_markdown_events!(r##"[foo]
+    test_identical_markdown_events!(
+        r##"[foo]
 
 [foo]: first
-[foo]: second"##,r##"[foo]
+[foo]: second"##,
+        r##"[foo]
 
-[foo]: first"##);
+[foo]: first"##
+    );
 }
 
 #[test]
 fn gfm_markdown_link_reference_definitions_174() {
     // https://github.github.com/gfm/#example-174
-    test_identical_markdown_events!(r##"[FOO]: /url
+    test_identical_markdown_events!(
+        r##"[FOO]: /url
 
-[Foo]"##,r##"[FOO]: /url
+[Foo]"##,
+        r##"[FOO]: /url
 
-[Foo]"##);
+[Foo]"##
+    );
 }
 
 #[test]
 fn gfm_markdown_link_reference_definitions_175() {
     // https://github.github.com/gfm/#example-175
-    test_identical_markdown_events!(r##"[ΑΓΩ]: /φου
+    test_identical_markdown_events!(
+        r##"[ΑΓΩ]: /φου
 
-[αγω]"##,r##"[ΑΓΩ]: /φου
+[αγω]"##,
+        r##"[ΑΓΩ]: /φου
 
-[αγω]"##);
+[αγω]"##
+    );
 }
 
 #[test]
@@ -1566,11 +1909,14 @@ fn gfm_markdown_link_reference_definitions_176() {
 #[test]
 fn gfm_markdown_link_reference_definitions_177() {
     // https://github.github.com/gfm/#example-177
-    test_identical_markdown_events!(r##"[
+    test_identical_markdown_events!(
+        r##"[
 foo
 ]: /url
-bar"##,r##"[foo]: /url
-bar"##);
+bar"##,
+        r##"[foo]: /url
+bar"##
+    );
 }
 
 #[test]
@@ -1583,93 +1929,114 @@ fn gfm_markdown_link_reference_definitions_178() {
 #[test]
 fn gfm_markdown_link_reference_definitions_179() {
     // https://github.github.com/gfm/#example-179
-    test_identical_markdown_events!(r##"[foo]: /url
-"title" ok"##);
+    test_identical_markdown_events!(
+        r##"[foo]: /url
+"title" ok"##
+    );
 }
 
 #[test]
 fn gfm_markdown_link_reference_definitions_180() {
     // https://github.github.com/gfm/#example-180
-    test_identical_markdown_events!(r##"    [foo]: /url "title"
+    test_identical_markdown_events!(
+        r##"    [foo]: /url "title"
 
-[foo]"##);
+[foo]"##
+    );
 }
 
 #[test]
 fn gfm_markdown_link_reference_definitions_181() {
     // https://github.github.com/gfm/#example-181
-    test_identical_markdown_events!(r##"```
+    test_identical_markdown_events!(
+        r##"```
 [foo]: /url
 ```
 
-[foo]"##);
+[foo]"##
+    );
 }
 
 #[test]
 fn gfm_markdown_link_reference_definitions_182() {
     // https://github.github.com/gfm/#example-182
-    test_identical_markdown_events!(r##"Foo
+    test_identical_markdown_events!(
+        r##"Foo
 [bar]: /baz
 
-[bar]"##,r##"Foo
+[bar]"##,
+        r##"Foo
 [bar]: /baz
 
-[bar]"##);
+[bar]"##
+    );
 }
 
 #[test]
 fn gfm_markdown_link_reference_definitions_183() {
     // https://github.github.com/gfm/#example-183
-    test_identical_markdown_events!(r##"# [Foo]
+    test_identical_markdown_events!(
+        r##"# [Foo]
 [foo]: /url
-> bar"##);
+> bar"##
+    );
 }
 
 #[test]
 fn gfm_markdown_link_reference_definitions_184() {
     // https://github.github.com/gfm/#example-184
-    test_identical_markdown_events!(r##"[foo]: /url
+    test_identical_markdown_events!(
+        r##"[foo]: /url
 bar
 ===
-[foo]"##);
+[foo]"##
+    );
 }
 
 #[test]
 fn gfm_markdown_link_reference_definitions_185() {
     // https://github.github.com/gfm/#example-185
-    test_identical_markdown_events!(r##"[foo]: /url
+    test_identical_markdown_events!(
+        r##"[foo]: /url
 ===
-[foo]"##);
+[foo]"##
+    );
 }
 
 #[test]
 fn gfm_markdown_link_reference_definitions_186() {
     // https://github.github.com/gfm/#example-186
-    test_identical_markdown_events!(r##"[foo]: /foo-url "foo"
+    test_identical_markdown_events!(
+        r##"[foo]: /foo-url "foo"
 [bar]: /bar-url
   "bar"
 [baz]: /baz-url
 
 [foo],
 [bar],
-[baz]"##,r##"[foo]: /foo-url "foo"
+[baz]"##,
+        r##"[foo]: /foo-url "foo"
 [bar]: /bar-url "bar"
 [baz]: /baz-url
 
 [foo],
 [bar],
-[baz]"##);
+[baz]"##
+    );
 }
 
 #[test]
 fn gfm_markdown_link_reference_definitions_187() {
     // https://github.github.com/gfm/#example-187
-    test!(r##"[foo]
+    test!(
+        r##"[foo]
 
-> [foo]: /url"##,r##"[foo]
+> [foo]: /url"##,
+        r##"[foo]
 
 >
-[foo]: /url"##);
+[foo]: /url"##
+    );
 }
 
 #[test]
@@ -1681,255 +2048,323 @@ fn gfm_markdown_link_reference_definitions_188() {
 #[test]
 fn gfm_markdown_paragraphs_189() {
     // https://github.github.com/gfm/#example-189
-    test_identical_markdown_events!(r##"aaa
+    test_identical_markdown_events!(
+        r##"aaa
 
-bbb"##);
+bbb"##
+    );
 }
 
 #[test]
 fn gfm_markdown_paragraphs_190() {
     // https://github.github.com/gfm/#example-190
-    test_identical_markdown_events!(r##"aaa
+    test_identical_markdown_events!(
+        r##"aaa
 bbb
 
 ccc
-ddd"##);
+ddd"##
+    );
 }
 
 #[test]
 fn gfm_markdown_paragraphs_191() {
     // https://github.github.com/gfm/#example-191
-    test_identical_markdown_events!(r##"aaa
+    test_identical_markdown_events!(
+        r##"aaa
 
 
-bbb"##);
+bbb"##
+    );
 }
 
 #[test]
 fn gfm_markdown_paragraphs_192() {
     // https://github.github.com/gfm/#example-192
-    test_identical_markdown_events!(r##"  aaa
- bbb"##,r##"aaa
-bbb"##);
+    test_identical_markdown_events!(
+        r##"  aaa
+ bbb"##,
+        r##"aaa
+bbb"##
+    );
 }
 
 #[test]
 fn gfm_markdown_paragraphs_193() {
     // https://github.github.com/gfm/#example-193
-    test_identical_markdown_events!(r##"aaa
+    test_identical_markdown_events!(
+        r##"aaa
              bbb
-                                       ccc"##,r##"aaa
+                                       ccc"##,
+        r##"aaa
 bbb
-ccc"##);
+ccc"##
+    );
 }
 
 #[test]
 fn gfm_markdown_paragraphs_194() {
     // https://github.github.com/gfm/#example-194
-    test_identical_markdown_events!(r##"   aaa
-bbb"##,r##"aaa
-bbb"##);
+    test_identical_markdown_events!(
+        r##"   aaa
+bbb"##,
+        r##"aaa
+bbb"##
+    );
 }
 
 #[test]
 fn gfm_markdown_paragraphs_195() {
     // https://github.github.com/gfm/#example-195
-    test_identical_markdown_events!(r##"    aaa
-bbb"##);
+    test_identical_markdown_events!(
+        r##"    aaa
+bbb"##
+    );
 }
 
 #[test]
 fn gfm_markdown_paragraphs_196() {
     // https://github.github.com/gfm/#example-196
-    test_identical_markdown_events!("aaa     \nbbb     ","aaa     \nbbb");
+    test_identical_markdown_events!("aaa     \nbbb     ", "aaa     \nbbb");
 }
 
 #[test]
 fn gfm_markdown_blank_lines_197() {
     // https://github.github.com/gfm/#example-197
-    test_identical_markdown_events!("  \n\naaa\n  \n\n# aaa\n\n  ",r##"aaa
+    test_identical_markdown_events!(
+        "  \n\naaa\n  \n\n# aaa\n\n  ",
+        r##"aaa
 
 
-# aaa"##);
+# aaa"##
+    );
 }
 
 #[test]
 fn gfm_markdown_tables_extension_198() {
     // https://github.github.com/gfm/#example-198
-    test_identical_markdown_events!(r##"| foo | bar |
+    test_identical_markdown_events!(
+        r##"| foo | bar |
 | --- | --- |
-| baz | bim |"##);
+| baz | bim |"##
+    );
 }
 
 #[test]
 fn gfm_markdown_tables_extension_199() {
     // https://github.github.com/gfm/#example-199
-    test_identical_markdown_events!(r##"| abc | defghi |
+    test_identical_markdown_events!(
+        r##"| abc | defghi |
 :-: | -----------:
-bar | baz"##,r##"| abc | defghi |
+bar | baz"##,
+        r##"| abc | defghi |
 | :-: | -----: |
-| bar | baz    |"##);
+| bar | baz    |"##
+    );
 }
 
 #[test]
 fn gfm_markdown_tables_extension_200() {
     // https://github.github.com/gfm/#example-200
-    test_identical_markdown_events!(r##"| f\|oo  |
+    test_identical_markdown_events!(
+        r##"| f\|oo  |
 | ------ |
 | b `\|` az |
-| b **\|** im |"##,r##"| f\|oo       |
+| b **\|** im |"##,
+        r##"| f\|oo       |
 | ----------- |
 | b `\|` az   |
-| b **\|** im |"##);
+| b **\|** im |"##
+    );
 }
 
 #[test]
 fn gfm_markdown_tables_extension_201() {
     // https://github.github.com/gfm/#example-201
-    test_identical_markdown_events!(r##"| abc | def |
+    test_identical_markdown_events!(
+        r##"| abc | def |
 | --- | --- |
 | bar | baz |
-> bar"##);
+> bar"##
+    );
 }
 
 #[test]
 fn gfm_markdown_tables_extension_202() {
     // https://github.github.com/gfm/#example-202
-    test_identical_markdown_events!(r##"| abc | def |
+    test_identical_markdown_events!(
+        r##"| abc | def |
 | --- | --- |
 | bar | baz |
 bar
 
-bar"##,r##"| abc | def |
+bar"##,
+        r##"| abc | def |
 | --- | --- |
 | bar | baz |
 | bar |     |
 
-bar"##);
+bar"##
+    );
 }
 
 #[test]
 fn gfm_markdown_tables_extension_203() {
     // https://github.github.com/gfm/#example-203
-    test_identical_markdown_events!(r##"| abc | def |
+    test_identical_markdown_events!(
+        r##"| abc | def |
 | --- |
-| bar |"##);
+| bar |"##
+    );
 }
 
 #[test]
 fn gfm_markdown_tables_extension_204() {
     // https://github.github.com/gfm/#example-204
-    test_identical_markdown_events!(r##"| abc | def |
+    test_identical_markdown_events!(
+        r##"| abc | def |
 | --- | --- |
 | bar |
-| bar | baz | boo |"##,r##"| abc | def |
+| bar | baz | boo |"##,
+        r##"| abc | def |
 | --- | --- |
 | bar |     |
-| bar | baz |"##);
+| bar | baz |"##
+    );
 }
 
 #[test]
 fn gfm_markdown_tables_extension_205() {
     // https://github.github.com/gfm/#example-205
-    test_identical_markdown_events!(r##"| abc | def |
-| --- | --- |"##);
+    test_identical_markdown_events!(
+        r##"| abc | def |
+| --- | --- |"##
+    );
 }
 
 #[test]
 fn gfm_markdown_block_quotes_206() {
     // https://github.github.com/gfm/#example-206
-    test_identical_markdown_events!(r##"> # Foo
+    test_identical_markdown_events!(
+        r##"> # Foo
 > bar
-> baz"##);
+> baz"##
+    );
 }
 
 #[test]
 fn gfm_markdown_block_quotes_207() {
     // https://github.github.com/gfm/#example-207
-    test_identical_markdown_events!(r##"># Foo
+    test_identical_markdown_events!(
+        r##"># Foo
 >bar
-> baz"##,r##"> # Foo
+> baz"##,
+        r##"> # Foo
 > bar
-> baz"##);
+> baz"##
+    );
 }
 
 #[test]
 fn gfm_markdown_block_quotes_208() {
     // https://github.github.com/gfm/#example-208
-    test_identical_markdown_events!(r##"   > # Foo
+    test_identical_markdown_events!(
+        r##"   > # Foo
    > bar
- > baz"##,r##"> # Foo
+ > baz"##,
+        r##"> # Foo
 > bar
-> baz"##);
+> baz"##
+    );
 }
 
 #[test]
 fn gfm_markdown_block_quotes_209() {
     // https://github.github.com/gfm/#example-209
-    test_identical_markdown_events!(r##"    > # Foo
+    test_identical_markdown_events!(
+        r##"    > # Foo
     > bar
-    > baz"##);
+    > baz"##
+    );
 }
 
 #[test]
 fn gfm_markdown_block_quotes_210() {
     // https://github.github.com/gfm/#example-210
-    test_identical_markdown_events!(r##"> # Foo
+    test_identical_markdown_events!(
+        r##"> # Foo
 > bar
-baz"##,r##"> # Foo
+baz"##,
+        r##"> # Foo
 > bar
-> baz"##);
+> baz"##
+    );
 }
 
 #[test]
 fn gfm_markdown_block_quotes_211() {
     // https://github.github.com/gfm/#example-211
-    test_identical_markdown_events!(r##"> bar
+    test_identical_markdown_events!(
+        r##"> bar
 baz
-> foo"##,r##"> bar
+> foo"##,
+        r##"> bar
 > baz
-> foo"##);
+> foo"##
+    );
 }
 
 #[test]
 fn gfm_markdown_block_quotes_212() {
     // https://github.github.com/gfm/#example-212
-    test_identical_markdown_events!(r##"> foo
----"##);
+    test_identical_markdown_events!(
+        r##"> foo
+---"##
+    );
 }
 
 #[test]
 fn gfm_markdown_block_quotes_213() {
     // https://github.github.com/gfm/#example-213
-    test_identical_markdown_events!(r##"> - foo
-- bar"##);
+    test_identical_markdown_events!(
+        r##"> - foo
+- bar"##
+    );
 }
 
 #[test]
 fn gfm_markdown_block_quotes_214() {
     // https://github.github.com/gfm/#example-214
-    test_identical_markdown_events!(r##">     foo
-    bar"##);
+    test_identical_markdown_events!(
+        r##">     foo
+    bar"##
+    );
 }
 
 #[test]
 fn gfm_markdown_block_quotes_215() {
     // https://github.github.com/gfm/#example-215
-    test_identical_markdown_events!(r##"> ```
+    test_identical_markdown_events!(
+        r##"> ```
 foo
-```"##,r##"> ```
+```"##,
+        r##"> ```
 > ```
 foo
 ```
-```"##);
+```"##
+    );
 }
 
 #[test]
 fn gfm_markdown_block_quotes_216() {
     // https://github.github.com/gfm/#example-216
-    test_identical_markdown_events!(r##"> foo
-    - bar"##,r##"> foo
-> \- bar"##);
+    test_identical_markdown_events!(
+        r##"> foo
+    - bar"##,
+        r##"> foo
+> \- bar"##
+    );
 }
 
 #[test]
@@ -1941,217 +2376,276 @@ fn gfm_markdown_block_quotes_217() {
 #[test]
 fn gfm_markdown_block_quotes_218() {
     // https://github.github.com/gfm/#example-218
-    test_identical_markdown_events!(">\n>  \n> ",r##">
+    test_identical_markdown_events!(
+        ">\n>  \n> ",
+        r##">
 >
->"##);
+>"##
+    );
 }
 
 #[test]
 fn gfm_markdown_block_quotes_219() {
     // https://github.github.com/gfm/#example-219
-    test_identical_markdown_events!(">\n> foo\n>  ",r##">
+    test_identical_markdown_events!(
+        ">\n> foo\n>  ",
+        r##">
 > foo
->"##);
+>"##
+    );
 }
 
 #[test]
 fn gfm_markdown_block_quotes_220() {
     // https://github.github.com/gfm/#example-220
-    test_identical_markdown_events!(r##"> foo
+    test_identical_markdown_events!(
+        r##"> foo
 
-> bar"##);
+> bar"##
+    );
 }
 
 #[test]
 fn gfm_markdown_block_quotes_221() {
     // https://github.github.com/gfm/#example-221
-    test_identical_markdown_events!(r##"> foo
-> bar"##);
+    test_identical_markdown_events!(
+        r##"> foo
+> bar"##
+    );
 }
 
 #[test]
 fn gfm_markdown_block_quotes_222() {
     // https://github.github.com/gfm/#example-222
-    test_identical_markdown_events!(r##"> foo
+    test_identical_markdown_events!(
+        r##"> foo
 >
-> bar"##);
+> bar"##
+    );
 }
 
 #[test]
 fn gfm_markdown_block_quotes_223() {
     // https://github.github.com/gfm/#example-223
-    test_identical_markdown_events!(r##"foo
-> bar"##);
+    test_identical_markdown_events!(
+        r##"foo
+> bar"##
+    );
 }
 
 #[test]
 fn gfm_markdown_block_quotes_224() {
     // https://github.github.com/gfm/#example-224
-    test_identical_markdown_events!(r##"> aaa
+    test_identical_markdown_events!(
+        r##"> aaa
 ***
-> bbb"##);
+> bbb"##
+    );
 }
 
 #[test]
 fn gfm_markdown_block_quotes_225() {
     // https://github.github.com/gfm/#example-225
-    test_identical_markdown_events!(r##"> bar
-baz"##,r##"> bar
-> baz"##);
+    test_identical_markdown_events!(
+        r##"> bar
+baz"##,
+        r##"> bar
+> baz"##
+    );
 }
 
 #[test]
 fn gfm_markdown_block_quotes_226() {
     // https://github.github.com/gfm/#example-226
-    test_identical_markdown_events!(r##"> bar
+    test_identical_markdown_events!(
+        r##"> bar
 
-baz"##);
+baz"##
+    );
 }
 
 #[test]
 fn gfm_markdown_block_quotes_227() {
     // https://github.github.com/gfm/#example-227
-    test_identical_markdown_events!(r##"> bar
+    test_identical_markdown_events!(
+        r##"> bar
 >
-baz"##);
+baz"##
+    );
 }
 
 #[test]
 fn gfm_markdown_block_quotes_228() {
     // https://github.github.com/gfm/#example-228
-    test_identical_markdown_events!(r##"> > > foo
-bar"##,r##">>> foo
->>> bar"##);
+    test_identical_markdown_events!(
+        r##"> > > foo
+bar"##,
+        r##">>> foo
+>>> bar"##
+    );
 }
 
 #[test]
 fn gfm_markdown_block_quotes_229() {
     // https://github.github.com/gfm/#example-229
-    test_identical_markdown_events!(r##">>> foo
+    test_identical_markdown_events!(
+        r##">>> foo
 > bar
->>baz"##,r##">>> foo
+>>baz"##,
+        r##">>> foo
 >>> bar
->>> baz"##);
+>>> baz"##
+    );
 }
 
 #[test]
 fn gfm_markdown_block_quotes_230() {
     // https://github.github.com/gfm/#example-230
-    test_identical_markdown_events!(r##">     code
+    test_identical_markdown_events!(
+        r##">     code
 
->    not code"##,r##">     code
+>    not code"##,
+        r##">     code
 
-> not code"##);
+> not code"##
+    );
 }
 
 #[test]
 fn gfm_markdown_list_items_231() {
     // https://github.github.com/gfm/#example-231
-    test_identical_markdown_events!(r##"A paragraph
+    test_identical_markdown_events!(
+        r##"A paragraph
 with two lines.
 
     indented code
 
-> A block quote."##);
+> A block quote."##
+    );
 }
 
 #[test]
 fn gfm_markdown_list_items_232() {
     // https://github.github.com/gfm/#example-232
-    test_identical_markdown_events!(r##"1.  A paragraph
+    test_identical_markdown_events!(
+        r##"1.  A paragraph
     with two lines.
 
         indented code
 
-    > A block quote."##,r##"1. A paragraph
+    > A block quote."##,
+        r##"1. A paragraph
    with two lines.
 
        indented code
 
-   > A block quote."##);
+   > A block quote."##
+    );
 }
 
 #[test]
 fn gfm_markdown_list_items_233() {
     // https://github.github.com/gfm/#example-233
-    test_identical_markdown_events!(r##"- one
+    test_identical_markdown_events!(
+        r##"- one
 
- two"##,r##"- one
+ two"##,
+        r##"- one
 
-two"##);
+two"##
+    );
 }
 
 #[test]
 fn gfm_markdown_list_items_234() {
     // https://github.github.com/gfm/#example-234
-    test_identical_markdown_events!(r##"- one
+    test_identical_markdown_events!(
+        r##"- one
 
-  two"##);
+  two"##
+    );
 }
 
 #[test]
 fn gfm_markdown_list_items_235() {
     // https://github.github.com/gfm/#example-235
-    test!(r##" -    one
+    test!(
+        r##" -    one
 
-     two"##,r##"- one
+     two"##,
+        r##"- one
 <!-- Don't absorb code block into list -->
 <!-- Consider a fenced code block instead -->
 
-     two"##);
+     two"##
+    );
 }
 
 #[test]
 fn gfm_markdown_list_items_236() {
     // https://github.github.com/gfm/#example-236
-    test_identical_markdown_events!(r##" -    one
+    test_identical_markdown_events!(
+        r##" -    one
 
-      two"##,r##"- one
+      two"##,
+        r##"- one
 
-  two"##);
+  two"##
+    );
 }
 
 #[test]
 fn gfm_markdown_list_items_237() {
     // https://github.github.com/gfm/#example-237
-    test_identical_markdown_events!(r##"   > > 1.  one
+    test_identical_markdown_events!(
+        r##"   > > 1.  one
 >>
->>     two"##,r##">> 1. one
+>>     two"##,
+        r##">> 1. one
 >>
->>    two"##);
+>>    two"##
+    );
 }
 
 #[test]
 fn gfm_markdown_list_items_238() {
     // https://github.github.com/gfm/#example-238
-    test_identical_markdown_events!(r##">>- one
+    test_identical_markdown_events!(
+        r##">>- one
 >>
-  >  > two"##,r##">> - one
+  >  > two"##,
+        r##">> - one
 >>
->> two"##);
+>> two"##
+    );
 }
 
 #[test]
 fn gfm_markdown_list_items_239() {
     // https://github.github.com/gfm/#example-239
-    test_identical_markdown_events!(r##"-one
+    test_identical_markdown_events!(
+        r##"-one
 
-2.two"##);
+2.two"##
+    );
 }
 
 #[test]
 fn gfm_markdown_list_items_240() {
     // https://github.github.com/gfm/#example-240
-    test_identical_markdown_events!(r##"- foo
+    test_identical_markdown_events!(
+        r##"- foo
 
 
-  bar"##);
+  bar"##
+    );
 }
 
 #[test]
 fn gfm_markdown_list_items_241() {
     // https://github.github.com/gfm/#example-241
-    test_identical_markdown_events!(r##"1.  foo
+    test_identical_markdown_events!(
+        r##"1.  foo
 
     ```
     bar
@@ -2159,7 +2653,8 @@ fn gfm_markdown_list_items_241() {
 
     baz
 
-    > bam"##,r##"1. foo
+    > bam"##,
+        r##"1. foo
 
    ```
    bar
@@ -2167,18 +2662,21 @@ fn gfm_markdown_list_items_241() {
 
    baz
 
-   > bam"##);
+   > bam"##
+    );
 }
 
 #[test]
 fn gfm_markdown_list_items_242() {
     // https://github.github.com/gfm/#example-242
-    test_identical_markdown_events!(r##"- Foo
+    test_identical_markdown_events!(
+        r##"- Foo
 
       bar
 
 
-      baz"##);
+      baz"##
+    );
 }
 
 #[test]
@@ -2214,133 +2712,168 @@ fn gfm_markdown_list_items_247() {
 #[test]
 fn gfm_markdown_list_items_248() {
     // https://github.github.com/gfm/#example-248
-    test_identical_markdown_events!(r##"- foo
+    test_identical_markdown_events!(
+        r##"- foo
 
-      bar"##);
+      bar"##
+    );
 }
 
 #[test]
 fn gfm_markdown_list_items_249() {
     // https://github.github.com/gfm/#example-249
-    test_identical_markdown_events!(r##"  10.  foo
+    test_identical_markdown_events!(
+        r##"  10.  foo
 
-           bar"##,r##"10. foo
+           bar"##,
+        r##"10. foo
 
-        bar"##);
+        bar"##
+    );
 }
 
 #[test]
 fn gfm_markdown_list_items_250() {
     // https://github.github.com/gfm/#example-250
-    test_identical_markdown_events!(r##"    indented code
+    test_identical_markdown_events!(
+        r##"    indented code
 
 paragraph
 
-    more code"##);
+    more code"##
+    );
 }
 
 #[test]
 fn gfm_markdown_list_items_251() {
     // https://github.github.com/gfm/#example-251
-    test_identical_markdown_events!(r##"1.     indented code
+    test_identical_markdown_events!(
+        r##"1.     indented code
 
    paragraph
 
-       more code"##);
+       more code"##
+    );
 }
 
 #[test]
 fn gfm_markdown_list_items_252() {
     // https://github.github.com/gfm/#example-252
-    test_identical_markdown_events!(r##"1.      indented code
+    test_identical_markdown_events!(
+        r##"1.      indented code
 
    paragraph
 
-       more code"##);
+       more code"##
+    );
 }
 
 #[test]
 fn gfm_markdown_list_items_253() {
     // https://github.github.com/gfm/#example-253
-    test_identical_markdown_events!(r##"   foo
+    test_identical_markdown_events!(
+        r##"   foo
 
-bar"##,r##"foo
+bar"##,
+        r##"foo
 
-bar"##);
+bar"##
+    );
 }
 
 #[test]
 fn gfm_markdown_list_items_254() {
     // https://github.github.com/gfm/#example-254
-    test_identical_markdown_events!(r##"-    foo
+    test_identical_markdown_events!(
+        r##"-    foo
 
-  bar"##,r##"- foo
+  bar"##,
+        r##"- foo
 
-bar"##);
+bar"##
+    );
 }
 
 #[test]
 fn gfm_markdown_list_items_255() {
     // https://github.github.com/gfm/#example-255
-    test_identical_markdown_events!(r##"-  foo
+    test_identical_markdown_events!(
+        r##"-  foo
 
-   bar"##,r##"- foo
+   bar"##,
+        r##"- foo
 
-  bar"##);
+  bar"##
+    );
 }
 
 #[test]
 fn gfm_markdown_list_items_256() {
     // https://github.github.com/gfm/#example-256
-    test_identical_markdown_events!(r##"-
+    test_identical_markdown_events!(
+        r##"-
   foo
 -
   ```
   bar
   ```
 -
-      baz"##);
+      baz"##
+    );
 }
 
 #[test]
 fn gfm_markdown_list_items_257() {
     // https://github.github.com/gfm/#example-257
-    test_identical_markdown_events!("-   \n  foo",r##"-
-  foo"##);
+    test_identical_markdown_events!(
+        "-   \n  foo",
+        r##"-
+  foo"##
+    );
 }
 
 #[test]
 fn gfm_markdown_list_items_258() {
     // https://github.github.com/gfm/#example-258
-    test_identical_markdown_events!(r##"-
+    test_identical_markdown_events!(
+        r##"-
 
-  foo"##,r##"-
+  foo"##,
+        r##"-
 
-foo"##);
+foo"##
+    );
 }
 
 #[test]
 fn gfm_markdown_list_items_259() {
     // https://github.github.com/gfm/#example-259
-    test_identical_markdown_events!(r##"- foo
+    test_identical_markdown_events!(
+        r##"- foo
 -
-- bar"##);
+- bar"##
+    );
 }
 
 #[test]
 fn gfm_markdown_list_items_260() {
     // https://github.github.com/gfm/#example-260
-    test_identical_markdown_events!("- foo\n-   \n- bar",r##"- foo
+    test_identical_markdown_events!(
+        "- foo\n-   \n- bar",
+        r##"- foo
 -
-- bar"##);
+- bar"##
+    );
 }
 
 #[test]
 fn gfm_markdown_list_items_261() {
     // https://github.github.com/gfm/#example-261
-    test_identical_markdown_events!(r##"1. foo
+    test_identical_markdown_events!(
+        r##"1. foo
 2.
-3. bar"##);
+3. bar"##
+    );
 }
 
 #[test]
@@ -2352,146 +2885,181 @@ fn gfm_markdown_list_items_262() {
 #[test]
 fn gfm_markdown_list_items_263() {
     // https://github.github.com/gfm/#example-263
-    test_identical_markdown_events!(r##"foo
+    test_identical_markdown_events!(
+        r##"foo
 *
 
 foo
-1."##);
+1."##
+    );
 }
 
 #[test]
 fn gfm_markdown_list_items_264() {
     // https://github.github.com/gfm/#example-264
-    test_identical_markdown_events!(r##" 1.  A paragraph
+    test_identical_markdown_events!(
+        r##" 1.  A paragraph
      with two lines.
 
          indented code
 
-     > A block quote."##,r##"1. A paragraph
+     > A block quote."##,
+        r##"1. A paragraph
    with two lines.
 
        indented code
 
-   > A block quote."##);
+   > A block quote."##
+    );
 }
 
 #[test]
 fn gfm_markdown_list_items_265() {
     // https://github.github.com/gfm/#example-265
-    test_identical_markdown_events!(r##"  1.  A paragraph
+    test_identical_markdown_events!(
+        r##"  1.  A paragraph
       with two lines.
 
           indented code
 
-      > A block quote."##,r##"1. A paragraph
+      > A block quote."##,
+        r##"1. A paragraph
    with two lines.
 
        indented code
 
-   > A block quote."##);
+   > A block quote."##
+    );
 }
 
 #[test]
 fn gfm_markdown_list_items_266() {
     // https://github.github.com/gfm/#example-266
-    test_identical_markdown_events!(r##"   1.  A paragraph
+    test_identical_markdown_events!(
+        r##"   1.  A paragraph
        with two lines.
 
            indented code
 
-       > A block quote."##,r##"1. A paragraph
+       > A block quote."##,
+        r##"1. A paragraph
    with two lines.
 
        indented code
 
-   > A block quote."##);
+   > A block quote."##
+    );
 }
 
 #[test]
 fn gfm_markdown_list_items_267() {
     // https://github.github.com/gfm/#example-267
-    test_identical_markdown_events!(r##"    1.  A paragraph
+    test_identical_markdown_events!(
+        r##"    1.  A paragraph
         with two lines.
 
             indented code
 
-        > A block quote."##);
+        > A block quote."##
+    );
 }
 
 #[test]
 fn gfm_markdown_list_items_268() {
     // https://github.github.com/gfm/#example-268
-    test_identical_markdown_events!(r##"  1.  A paragraph
+    test_identical_markdown_events!(
+        r##"  1.  A paragraph
 with two lines.
 
           indented code
 
-      > A block quote."##,r##"1. A paragraph
+      > A block quote."##,
+        r##"1. A paragraph
    with two lines.
 
        indented code
 
-   > A block quote."##);
+   > A block quote."##
+    );
 }
 
 #[test]
 fn gfm_markdown_list_items_269() {
     // https://github.github.com/gfm/#example-269
-    test_identical_markdown_events!(r##"  1.  A paragraph
-    with two lines."##,r##"1. A paragraph
-   with two lines."##);
+    test_identical_markdown_events!(
+        r##"  1.  A paragraph
+    with two lines."##,
+        r##"1. A paragraph
+   with two lines."##
+    );
 }
 
 #[test]
 fn gfm_markdown_list_items_270() {
     // https://github.github.com/gfm/#example-270
-    test_identical_markdown_events!(r##"> 1. > Blockquote
-continued here."##,r##"> 1. > Blockquote
->    > continued here."##);
+    test_identical_markdown_events!(
+        r##"> 1. > Blockquote
+continued here."##,
+        r##"> 1. > Blockquote
+>    > continued here."##
+    );
 }
 
 #[test]
 fn gfm_markdown_list_items_271() {
     // https://github.github.com/gfm/#example-271
-    test_identical_markdown_events!(r##"> 1. > Blockquote
-> continued here."##,r##"> 1. > Blockquote
->    > continued here."##);
+    test_identical_markdown_events!(
+        r##"> 1. > Blockquote
+> continued here."##,
+        r##"> 1. > Blockquote
+>    > continued here."##
+    );
 }
 
 #[test]
 fn gfm_markdown_list_items_272() {
     // https://github.github.com/gfm/#example-272
-    test_identical_markdown_events!(r##"- foo
+    test_identical_markdown_events!(
+        r##"- foo
   - bar
     - baz
-      - boo"##);
+      - boo"##
+    );
 }
 
 #[test]
 fn gfm_markdown_list_items_273() {
     // https://github.github.com/gfm/#example-273
-    test_identical_markdown_events!(r##"- foo
+    test_identical_markdown_events!(
+        r##"- foo
  - bar
   - baz
-   - boo"##,r##"- foo
+   - boo"##,
+        r##"- foo
 - bar
 - baz
-- boo"##);
+- boo"##
+    );
 }
 
 #[test]
 fn gfm_markdown_list_items_274() {
     // https://github.github.com/gfm/#example-274
-    test_identical_markdown_events!(r##"10) foo
-    - bar"##);
+    test_identical_markdown_events!(
+        r##"10) foo
+    - bar"##
+    );
 }
 
 #[test]
 fn gfm_markdown_list_items_275() {
     // https://github.github.com/gfm/#example-275
-    test_identical_markdown_events!(r##"10) foo
-   - bar"##,r##"10) foo
-- bar"##);
+    test_identical_markdown_events!(
+        r##"10) foo
+   - bar"##,
+        r##"10) foo
+- bar"##
+    );
 }
 
 #[test]
@@ -2509,105 +3077,129 @@ fn gfm_markdown_list_items_277() {
 #[test]
 fn gfm_markdown_list_items_278() {
     // https://github.github.com/gfm/#example-278
-    test_identical_markdown_events!(r##"- # Foo
+    test_identical_markdown_events!(
+        r##"- # Foo
 - Bar
   ---
-  baz"##);
+  baz"##
+    );
 }
 
 #[test]
 fn gfm_markdown_task_list_items_extension_279() {
     // https://github.github.com/gfm/#example-279
-    test_identical_markdown_events!(r##"- [ ] foo
-- [x] bar"##);
+    test_identical_markdown_events!(
+        r##"- [ ] foo
+- [x] bar"##
+    );
 }
 
 #[test]
 fn gfm_markdown_task_list_items_extension_280() {
     // https://github.github.com/gfm/#example-280
-    test_identical_markdown_events!(r##"- [x] foo
+    test_identical_markdown_events!(
+        r##"- [x] foo
   - [ ] bar
   - [x] baz
-- [ ] bim"##);
+- [ ] bim"##
+    );
 }
 
 #[test]
 fn gfm_markdown_lists_281() {
     // https://github.github.com/gfm/#example-281
-    test_identical_markdown_events!(r##"- foo
+    test_identical_markdown_events!(
+        r##"- foo
 - bar
-+ baz"##);
++ baz"##
+    );
 }
 
 #[test]
 fn gfm_markdown_lists_282() {
     // https://github.github.com/gfm/#example-282
-    test_identical_markdown_events!(r##"1. foo
+    test_identical_markdown_events!(
+        r##"1. foo
 2. bar
-3) baz"##);
+3) baz"##
+    );
 }
 
 #[test]
 fn gfm_markdown_lists_283() {
     // https://github.github.com/gfm/#example-283
-    test_identical_markdown_events!(r##"Foo
+    test_identical_markdown_events!(
+        r##"Foo
 - bar
-- baz"##);
+- baz"##
+    );
 }
 
 #[test]
 fn gfm_markdown_lists_284() {
     // https://github.github.com/gfm/#example-284
-    test_identical_markdown_events!(r##"The number of windows in my house is
-14.  The number of doors is 6."##);
+    test_identical_markdown_events!(
+        r##"The number of windows in my house is
+14.  The number of doors is 6."##
+    );
 }
 
 #[test]
 fn gfm_markdown_lists_285() {
     // https://github.github.com/gfm/#example-285
-    test_identical_markdown_events!(r##"The number of windows in my house is
-1.  The number of doors is 6."##,r##"The number of windows in my house is
-1. The number of doors is 6."##);
+    test_identical_markdown_events!(
+        r##"The number of windows in my house is
+1.  The number of doors is 6."##,
+        r##"The number of windows in my house is
+1. The number of doors is 6."##
+    );
 }
 
 #[test]
 fn gfm_markdown_lists_286() {
     // https://github.github.com/gfm/#example-286
-    test_identical_markdown_events!(r##"- foo
+    test_identical_markdown_events!(
+        r##"- foo
 
 - bar
 
 
-- baz"##);
+- baz"##
+    );
 }
 
 #[test]
 fn gfm_markdown_lists_287() {
     // https://github.github.com/gfm/#example-287
-    test_identical_markdown_events!(r##"- foo
+    test_identical_markdown_events!(
+        r##"- foo
   - bar
     - baz
 
 
-      bim"##);
+      bim"##
+    );
 }
 
 #[test]
 fn gfm_markdown_lists_288() {
     // https://github.github.com/gfm/#example-288
-    test_identical_markdown_events!(r##"- foo
+    test_identical_markdown_events!(
+        r##"- foo
 - bar
 
 <!-- -->
 
 - baz
-- bim"##);
+- bim"##
+    );
 }
 
 #[test]
 fn gfm_markdown_lists_289() {
     // https://github.github.com/gfm/#example-289
-    test_identical_markdown_events!(r##"-   foo
+    test_identical_markdown_events!(
+        r##"-   foo
 
     notcode
 
@@ -2615,7 +3207,8 @@ fn gfm_markdown_lists_289() {
 
 <!-- -->
 
-    code"##,r##"- foo
+    code"##,
+        r##"- foo
 
   notcode
 
@@ -2623,153 +3216,183 @@ fn gfm_markdown_lists_289() {
 
 <!-- -->
 
-    code"##);
+    code"##
+    );
 }
 
 #[test]
 fn gfm_markdown_lists_290() {
     // https://github.github.com/gfm/#example-290
-    test_identical_markdown_events!(r##"- a
+    test_identical_markdown_events!(
+        r##"- a
  - b
   - c
    - d
   - e
  - f
-- g"##,r##"- a
+- g"##,
+        r##"- a
 - b
 - c
 - d
 - e
 - f
-- g"##);
+- g"##
+    );
 }
 
 #[test]
 fn gfm_markdown_lists_291() {
     // https://github.github.com/gfm/#example-291
-    test_identical_markdown_events!(r##"1. a
+    test_identical_markdown_events!(
+        r##"1. a
 
   2. b
 
-   3. c"##,r##"1. a
+   3. c"##,
+        r##"1. a
 
 2. b
 
-3. c"##);
+3. c"##
+    );
 }
 
 #[test]
 fn gfm_markdown_lists_292() {
     // https://github.github.com/gfm/#example-292
-    test_identical_markdown_events!(r##"- a
+    test_identical_markdown_events!(
+        r##"- a
  - b
   - c
    - d
-    - e"##,r##"- a
+    - e"##,
+        r##"- a
 - b
 - c
 - d
-  \- e"##);
+  \- e"##
+    );
 }
 
 #[test]
 fn gfm_markdown_lists_293() {
     // https://github.github.com/gfm/#example-293
-    test!(r##"1. a
+    test!(
+        r##"1. a
 
   2. b
 
-    3. c"##,r##"1. a
+    3. c"##,
+        r##"1. a
 
 2. b
 <!-- Don't absorb code block into list -->
 <!-- Consider a fenced code block instead -->
 
-    3. c"##);
+    3. c"##
+    );
 }
 
 #[test]
 fn gfm_markdown_lists_294() {
     // https://github.github.com/gfm/#example-294
-    test_identical_markdown_events!(r##"- a
+    test_identical_markdown_events!(
+        r##"- a
 - b
 
-- c"##);
+- c"##
+    );
 }
 
 #[test]
 fn gfm_markdown_lists_295() {
     // https://github.github.com/gfm/#example-295
-    test_identical_markdown_events!(r##"* a
+    test_identical_markdown_events!(
+        r##"* a
 *
 
-* c"##);
+* c"##
+    );
 }
 
 #[test]
 fn gfm_markdown_lists_296() {
     // https://github.github.com/gfm/#example-296
-    test_identical_markdown_events!(r##"- a
+    test_identical_markdown_events!(
+        r##"- a
 - b
 
   c
-- d"##);
+- d"##
+    );
 }
 
 #[test]
 fn gfm_markdown_lists_297() {
     // https://github.github.com/gfm/#example-297
-    test!(r##"- a
+    test!(
+        r##"- a
 - b
 
   [ref]: /url
-- d"##,r##"- a
+- d"##,
+        r##"- a
 - b
 
 [ref]: /url
-- d"##);
+- d"##
+    );
 }
 
 #[test]
 fn gfm_markdown_lists_298() {
     // https://github.github.com/gfm/#example-298
-    test_identical_markdown_events!(r##"- a
+    test_identical_markdown_events!(
+        r##"- a
 - ```
   b
 
 
   ```
-- c"##);
+- c"##
+    );
 }
 
 #[test]
 fn gfm_markdown_lists_299() {
     // https://github.github.com/gfm/#example-299
-    test_identical_markdown_events!(r##"- a
+    test_identical_markdown_events!(
+        r##"- a
   - b
 
     c
-- d"##);
+- d"##
+    );
 }
 
 #[test]
 fn gfm_markdown_lists_300() {
     // https://github.github.com/gfm/#example-300
-    test_identical_markdown_events!(r##"* a
+    test_identical_markdown_events!(
+        r##"* a
   > b
   >
-* c"##);
+* c"##
+    );
 }
 
 #[test]
 fn gfm_markdown_lists_301() {
     // https://github.github.com/gfm/#example-301
-    test_identical_markdown_events!(r##"- a
+    test_identical_markdown_events!(
+        r##"- a
   > b
   ```
   c
   ```
-- d"##);
+- d"##
+    );
 }
 
 #[test]
@@ -2781,39 +3404,47 @@ fn gfm_markdown_lists_302() {
 #[test]
 fn gfm_markdown_lists_303() {
     // https://github.github.com/gfm/#example-303
-    test_identical_markdown_events!(r##"- a
-  - b"##);
+    test_identical_markdown_events!(
+        r##"- a
+  - b"##
+    );
 }
 
 #[test]
 fn gfm_markdown_lists_304() {
     // https://github.github.com/gfm/#example-304
-    test_identical_markdown_events!(r##"1. ```
+    test_identical_markdown_events!(
+        r##"1. ```
    foo
    ```
 
-   bar"##);
+   bar"##
+    );
 }
 
 #[test]
 fn gfm_markdown_lists_305() {
     // https://github.github.com/gfm/#example-305
-    test_identical_markdown_events!(r##"* foo
+    test_identical_markdown_events!(
+        r##"* foo
   * bar
 
-  baz"##);
+  baz"##
+    );
 }
 
 #[test]
 fn gfm_markdown_lists_306() {
     // https://github.github.com/gfm/#example-306
-    test_identical_markdown_events!(r##"- a
+    test_identical_markdown_events!(
+        r##"- a
   - b
   - c
 
 - d
   - e
-  - f"##);
+  - f"##
+    );
 }
 
 #[test]
@@ -2825,7 +3456,9 @@ fn gfm_markdown_inlines_307() {
 #[test]
 fn gfm_markdown_backslash_escapes_308() {
     // https://github.github.com/gfm/#example-308
-    test_identical_markdown_events!(r##"\!\"\#\$\%\&\'\(\)\*\+\,\-\.\/\:\;\<\=\>\?\@\[\\\]\^\_\`\{\|\}\~"##);
+    test_identical_markdown_events!(
+        r##"\!\"\#\$\%\&\'\(\)\*\+\,\-\.\/\:\;\<\=\>\?\@\[\\\]\^\_\`\{\|\}\~"##
+    );
 }
 
 #[test]
@@ -2837,7 +3470,8 @@ fn gfm_markdown_backslash_escapes_309() {
 #[test]
 fn gfm_markdown_backslash_escapes_310() {
     // https://github.github.com/gfm/#example-310
-    test_identical_markdown_events!(r##"\*not emphasized*
+    test_identical_markdown_events!(
+        r##"\*not emphasized*
 \<br/> not a tag
 \[not a link](/foo)
 \`not code`
@@ -2845,7 +3479,8 @@ fn gfm_markdown_backslash_escapes_310() {
 \* not a list
 \# not a heading
 \[foo]: /url "not a reference"
-\&ouml; not a character entity"##);
+\&ouml; not a character entity"##
+    );
 }
 
 #[test]
@@ -2857,8 +3492,10 @@ fn gfm_markdown_backslash_escapes_311() {
 #[test]
 fn gfm_markdown_backslash_escapes_312() {
     // https://github.github.com/gfm/#example-312
-    test_identical_markdown_events!(r##"foo\
-bar"##);
+    test_identical_markdown_events!(
+        r##"foo\
+bar"##
+    );
 }
 
 #[test]
@@ -2876,9 +3513,11 @@ fn gfm_markdown_backslash_escapes_314() {
 #[test]
 fn gfm_markdown_backslash_escapes_315() {
     // https://github.github.com/gfm/#example-315
-    test_identical_markdown_events!(r##"~~~
+    test_identical_markdown_events!(
+        r##"~~~
 \[\]
-~~~"##);
+~~~"##
+    );
 }
 
 #[test]
@@ -2902,25 +3541,31 @@ fn gfm_markdown_backslash_escapes_318() {
 #[test]
 fn gfm_markdown_backslash_escapes_319() {
     // https://github.github.com/gfm/#example-319
-    test_identical_markdown_events!(r##"[foo]
+    test_identical_markdown_events!(
+        r##"[foo]
 
-[foo]: /bar\* "ti\*tle""##);
+[foo]: /bar\* "ti\*tle""##
+    );
 }
 
 #[test]
 fn gfm_markdown_backslash_escapes_320() {
     // https://github.github.com/gfm/#example-320
-    test_identical_markdown_events!(r##"``` foo\+bar
+    test_identical_markdown_events!(
+        r##"``` foo\+bar
 foo
-```"##);
+```"##
+    );
 }
 
 #[test]
 fn gfm_markdown_entity_and_numeric_character_references_321() {
     // https://github.github.com/gfm/#example-321
-    test_identical_markdown_events!(r##"&nbsp; &amp; &copy; &AElig; &Dcaron;
+    test_identical_markdown_events!(
+        r##"&nbsp; &amp; &copy; &AElig; &Dcaron;
 &frac34; &HilbertSpace; &DifferentialD;
-&ClockwiseContourIntegral; &ngE;"##);
+&ClockwiseContourIntegral; &ngE;"##
+    );
 }
 
 #[test]
@@ -2938,10 +3583,12 @@ fn gfm_markdown_entity_and_numeric_character_references_323() {
 #[test]
 fn gfm_markdown_entity_and_numeric_character_references_324() {
     // https://github.github.com/gfm/#example-324
-    test_identical_markdown_events!(r##"&nbsp &x; &#; &#x;
+    test_identical_markdown_events!(
+        r##"&nbsp &x; &#; &#x;
 &#987654321;
 &#abcdef0;
-&ThisIsNotDefined; &hi?;"##);
+&ThisIsNotDefined; &hi?;"##
+    );
 }
 
 #[test]
@@ -2971,17 +3618,21 @@ fn gfm_markdown_entity_and_numeric_character_references_328() {
 #[test]
 fn gfm_markdown_entity_and_numeric_character_references_329() {
     // https://github.github.com/gfm/#example-329
-    test_identical_markdown_events!(r##"[foo]
+    test_identical_markdown_events!(
+        r##"[foo]
 
-[foo]: /f&ouml;&ouml; "f&ouml;&ouml;""##);
+[foo]: /f&ouml;&ouml; "f&ouml;&ouml;""##
+    );
 }
 
 #[test]
 fn gfm_markdown_entity_and_numeric_character_references_330() {
     // https://github.github.com/gfm/#example-330
-    test_identical_markdown_events!(r##"``` f&ouml;&ouml;
+    test_identical_markdown_events!(
+        r##"``` f&ouml;&ouml;
 foo
-```"##);
+```"##
+    );
 }
 
 #[test]
@@ -2999,16 +3650,20 @@ fn gfm_markdown_entity_and_numeric_character_references_332() {
 #[test]
 fn gfm_markdown_entity_and_numeric_character_references_333() {
     // https://github.github.com/gfm/#example-333
-    test_identical_markdown_events!(r##"&#42;foo&#42;
-*foo*"##);
+    test_identical_markdown_events!(
+        r##"&#42;foo&#42;
+*foo*"##
+    );
 }
 
 #[test]
 fn gfm_markdown_entity_and_numeric_character_references_334() {
     // https://github.github.com/gfm/#example-334
-    test_identical_markdown_events!(r##"&#42; foo
+    test_identical_markdown_events!(
+        r##"&#42; foo
 
-* foo"##);
+* foo"##
+    );
 }
 
 #[test]
@@ -3068,8 +3723,10 @@ fn gfm_markdown_code_spans_343() {
 #[test]
 fn gfm_markdown_code_spans_344() {
     // https://github.github.com/gfm/#example-344
-    test_identical_markdown_events!(r##"` `
-`  `"##);
+    test_identical_markdown_events!(
+        r##"` `
+`  `"##
+    );
 }
 
 #[test]
@@ -3261,8 +3918,10 @@ fn gfm_markdown_emphasis_and_strong_emphasis_375() {
 #[test]
 fn gfm_markdown_emphasis_and_strong_emphasis_376() {
     // https://github.github.com/gfm/#example-376
-    test_identical_markdown_events!(r##"*foo bar
-*"##);
+    test_identical_markdown_events!(
+        r##"*foo bar
+*"##
+    );
 }
 
 #[test]
@@ -3364,8 +4023,10 @@ fn gfm_markdown_emphasis_and_strong_emphasis_392() {
 #[test]
 fn gfm_markdown_emphasis_and_strong_emphasis_393() {
     // https://github.github.com/gfm/#example-393
-    test_identical_markdown_events!(r##"__
-foo bar__"##);
+    test_identical_markdown_events!(
+        r##"__
+foo bar__"##
+    );
 }
 
 #[test]
@@ -3425,8 +4086,10 @@ fn gfm_markdown_emphasis_and_strong_emphasis_402() {
 #[test]
 fn gfm_markdown_emphasis_and_strong_emphasis_403() {
     // https://github.github.com/gfm/#example-403
-    test_identical_markdown_events!(r##"**Gomphocarpus (*Gomphocarpus physocarpus*, syn.
-*Asclepias physocarpa*)**"##);
+    test_identical_markdown_events!(
+        r##"**Gomphocarpus (*Gomphocarpus physocarpus*, syn.
+*Asclepias physocarpa*)**"##
+    );
 }
 
 #[test]
@@ -3492,8 +4155,10 @@ fn gfm_markdown_emphasis_and_strong_emphasis_413() {
 #[test]
 fn gfm_markdown_emphasis_and_strong_emphasis_414() {
     // https://github.github.com/gfm/#example-414
-    test_identical_markdown_events!(r##"*foo
-bar*"##);
+    test_identical_markdown_events!(
+        r##"*foo
+bar*"##
+    );
 }
 
 #[test]
@@ -3601,8 +4266,10 @@ fn gfm_markdown_emphasis_and_strong_emphasis_431() {
 #[test]
 fn gfm_markdown_emphasis_and_strong_emphasis_432() {
     // https://github.github.com/gfm/#example-432
-    test_identical_markdown_events!(r##"**foo
-bar**"##);
+    test_identical_markdown_events!(
+        r##"**foo
+bar**"##
+    );
 }
 
 #[test]
@@ -3656,8 +4323,10 @@ fn gfm_markdown_emphasis_and_strong_emphasis_440() {
 #[test]
 fn gfm_markdown_emphasis_and_strong_emphasis_441() {
     // https://github.github.com/gfm/#example-441
-    test_identical_markdown_events!(r##"**foo *bar **baz**
-bim* bop**"##);
+    test_identical_markdown_events!(
+        r##"**foo *bar **baz**
+bim* bop**"##
+    );
 }
 
 #[test]
@@ -3963,9 +4632,11 @@ fn gfm_markdown_strikethrough_extension_491() {
 #[test]
 fn gfm_markdown_strikethrough_extension_492() {
     // https://github.github.com/gfm/#example-492
-    test_identical_markdown_events!(r##"This ~~has a
+    test_identical_markdown_events!(
+        r##"This ~~has a
 
-new paragraph~~."##);
+new paragraph~~."##
+    );
 }
 
 #[test]
@@ -3989,7 +4660,7 @@ fn gfm_markdown_links_495() {
 #[test]
 fn gfm_markdown_links_496() {
     // https://github.github.com/gfm/#example-496
-    test_identical_markdown_events!(r##"[link](<>)"##,r##"[link]()"##);
+    test_identical_markdown_events!(r##"[link](<>)"##, r##"[link]()"##);
 }
 
 #[test]
@@ -4007,15 +4678,19 @@ fn gfm_markdown_links_498() {
 #[test]
 fn gfm_markdown_links_499() {
     // https://github.github.com/gfm/#example-499
-    test_identical_markdown_events!(r##"[link](foo
-bar)"##);
+    test_identical_markdown_events!(
+        r##"[link](foo
+bar)"##
+    );
 }
 
 #[test]
 fn gfm_markdown_links_500() {
     // https://github.github.com/gfm/#example-500
-    test_identical_markdown_events!(r##"[link](<foo
-bar>)"##);
+    test_identical_markdown_events!(
+        r##"[link](<foo
+bar>)"##
+    );
 }
 
 #[test]
@@ -4033,9 +4708,11 @@ fn gfm_markdown_links_502() {
 #[test]
 fn gfm_markdown_links_503() {
     // https://github.github.com/gfm/#example-503
-    test_identical_markdown_events!(r##"[a](<b)c
+    test_identical_markdown_events!(
+        r##"[a](<b)c
 [a](<b)c>
-[a](<b>c)"##);
+[a](<b>c)"##
+    );
 }
 
 #[test]
@@ -4071,11 +4748,13 @@ fn gfm_markdown_links_508() {
 #[test]
 fn gfm_markdown_links_509() {
     // https://github.github.com/gfm/#example-509
-    test_identical_markdown_events!(r##"[link](#fragment)
+    test_identical_markdown_events!(
+        r##"[link](#fragment)
 
 [link](http://example.com#fragment)
 
-[link](http://example.com?foo=3#frag)"##);
+[link](http://example.com?foo=3#frag)"##
+    );
 }
 
 #[test]
@@ -4099,9 +4778,11 @@ fn gfm_markdown_links_512() {
 #[test]
 fn gfm_markdown_links_513() {
     // https://github.github.com/gfm/#example-513
-    test_identical_markdown_events!(r##"[link](/url "title")
+    test_identical_markdown_events!(
+        r##"[link](/url "title")
 [link](/url 'title')
-[link](/url (title))"##);
+[link](/url (title))"##
+    );
 }
 
 #[test]
@@ -4113,7 +4794,7 @@ fn gfm_markdown_links_514() {
 #[test]
 fn gfm_markdown_links_515() {
     // https://github.github.com/gfm/#example-515
-    test!(r##"[link](/url "title")"##,r##"[link](/url "title")"##);
+    test!(r##"[link](/url "title")"##, r##"[link](/url "title")"##);
 }
 
 #[test]
@@ -4131,8 +4812,11 @@ fn gfm_markdown_links_517() {
 #[test]
 fn gfm_markdown_links_518() {
     // https://github.github.com/gfm/#example-518
-    test_identical_markdown_events!(r##"[link](   /uri
-  "title"  )"##,r##"[link](/uri "title")"##);
+    test_identical_markdown_events!(
+        r##"[link](   /uri
+  "title"  )"##,
+        r##"[link](/uri "title")"##
+    );
 }
 
 #[test]
@@ -4234,249 +4918,310 @@ fn gfm_markdown_links_534() {
 #[test]
 fn gfm_markdown_links_535() {
     // https://github.github.com/gfm/#example-535
-    test_identical_markdown_events!(r##"[foo][bar]
+    test_identical_markdown_events!(
+        r##"[foo][bar]
 
-[bar]: /url "title""##);
+[bar]: /url "title""##
+    );
 }
 
 #[test]
 fn gfm_markdown_links_536() {
     // https://github.github.com/gfm/#example-536
-    test_identical_markdown_events!(r##"[link [foo [bar]]][ref]
+    test_identical_markdown_events!(
+        r##"[link [foo [bar]]][ref]
 
-[ref]: /uri"##);
+[ref]: /uri"##
+    );
 }
 
 #[test]
 fn gfm_markdown_links_537() {
     // https://github.github.com/gfm/#example-537
-    test_identical_markdown_events!(r##"[link \[bar][ref]
+    test_identical_markdown_events!(
+        r##"[link \[bar][ref]
 
-[ref]: /uri"##);
+[ref]: /uri"##
+    );
 }
 
 #[test]
 fn gfm_markdown_links_538() {
     // https://github.github.com/gfm/#example-538
-    test_identical_markdown_events!(r##"[link *foo **bar** `#`*][ref]
+    test_identical_markdown_events!(
+        r##"[link *foo **bar** `#`*][ref]
 
-[ref]: /uri"##);
+[ref]: /uri"##
+    );
 }
 
 #[test]
 fn gfm_markdown_links_539() {
     // https://github.github.com/gfm/#example-539
-    test_identical_markdown_events!(r##"[![moon](moon.jpg)][ref]
+    test_identical_markdown_events!(
+        r##"[![moon](moon.jpg)][ref]
 
-[ref]: /uri"##);
+[ref]: /uri"##
+    );
 }
 
 #[test]
 fn gfm_markdown_links_540() {
     // https://github.github.com/gfm/#example-540
-    test_identical_markdown_events!(r##"[foo [bar](/uri)][ref]
+    test_identical_markdown_events!(
+        r##"[foo [bar](/uri)][ref]
 
-[ref]: /uri"##);
+[ref]: /uri"##
+    );
 }
 
 #[test]
 fn gfm_markdown_links_541() {
     // https://github.github.com/gfm/#example-541
-    test_identical_markdown_events!(r##"[foo *bar [baz][ref]*][ref]
+    test_identical_markdown_events!(
+        r##"[foo *bar [baz][ref]*][ref]
 
-[ref]: /uri"##);
+[ref]: /uri"##
+    );
 }
 
 #[test]
 fn gfm_markdown_links_542() {
     // https://github.github.com/gfm/#example-542
-    test_identical_markdown_events!(r##"*[foo*][ref]
+    test_identical_markdown_events!(
+        r##"*[foo*][ref]
 
-[ref]: /uri"##);
+[ref]: /uri"##
+    );
 }
 
 #[test]
 fn gfm_markdown_links_543() {
     // https://github.github.com/gfm/#example-543
-    test_identical_markdown_events!(r##"[foo *bar][ref]
+    test_identical_markdown_events!(
+        r##"[foo *bar][ref]
 
-[ref]: /uri"##);
+[ref]: /uri"##
+    );
 }
 
 #[test]
 fn gfm_markdown_links_544() {
     // https://github.github.com/gfm/#example-544
-    test_identical_markdown_events!(r##"[foo <bar attr="][ref]">
+    test_identical_markdown_events!(
+        r##"[foo <bar attr="][ref]">
 
-[ref]: /uri"##);
+[ref]: /uri"##
+    );
 }
 
 #[test]
 fn gfm_markdown_links_545() {
     // https://github.github.com/gfm/#example-545
-    test_identical_markdown_events!(r##"[foo`][ref]`
+    test_identical_markdown_events!(
+        r##"[foo`][ref]`
 
-[ref]: /uri"##);
+[ref]: /uri"##
+    );
 }
 
 #[test]
 fn gfm_markdown_links_546() {
     // https://github.github.com/gfm/#example-546
-    test_identical_markdown_events!(r##"[foo<http://example.com/?search=][ref]>
+    test_identical_markdown_events!(
+        r##"[foo<http://example.com/?search=][ref]>
 
-[ref]: /uri"##);
+[ref]: /uri"##
+    );
 }
 
 #[test]
 fn gfm_markdown_links_547() {
     // https://github.github.com/gfm/#example-547
-    test_identical_markdown_events!(r##"[foo][BaR]
+    test_identical_markdown_events!(
+        r##"[foo][BaR]
 
-[bar]: /url "title""##);
+[bar]: /url "title""##
+    );
 }
 
 #[test]
 fn gfm_markdown_links_548() {
     // https://github.github.com/gfm/#example-548
-    test_identical_markdown_events!(r##"[Толпой][Толпой] is a Russian word.
+    test_identical_markdown_events!(
+        r##"[Толпой][Толпой] is a Russian word.
 
-[ТОЛПОЙ]: /url"##);
+[ТОЛПОЙ]: /url"##
+    );
 }
 
 #[test]
 fn gfm_markdown_links_549() {
     // https://github.github.com/gfm/#example-549
-    test_identical_markdown_events!(r##"[Foo
+    test_identical_markdown_events!(
+        r##"[Foo
   bar]: /url
 
-[Baz][Foo bar]"##,r##"[Foo bar]: /url
+[Baz][Foo bar]"##,
+        r##"[Foo bar]: /url
 
-[Baz][Foo bar]"##);
+[Baz][Foo bar]"##
+    );
 }
 
 #[test]
 fn gfm_markdown_links_550() {
     // https://github.github.com/gfm/#example-550
-    test_identical_markdown_events!(r##"[foo] [bar]
+    test_identical_markdown_events!(
+        r##"[foo] [bar]
 
-[bar]: /url "title""##);
+[bar]: /url "title""##
+    );
 }
 
 #[test]
 fn gfm_markdown_links_551() {
     // https://github.github.com/gfm/#example-551
-    test_identical_markdown_events!(r##"[foo]
+    test_identical_markdown_events!(
+        r##"[foo]
 [bar]
 
-[bar]: /url "title""##);
+[bar]: /url "title""##
+    );
 }
 
 #[test]
 fn gfm_markdown_links_552() {
     // https://github.github.com/gfm/#example-552
-    test_identical_markdown_events!(r##"[foo]: /url1
+    test_identical_markdown_events!(
+        r##"[foo]: /url1
 
 [foo]: /url2
 
-[bar][foo]"##,r##"[foo]: /url1
+[bar][foo]"##,
+        r##"[foo]: /url1
 
 
 
-[bar][foo]"##);
+[bar][foo]"##
+    );
 }
 
 #[test]
 fn gfm_markdown_links_553() {
     // https://github.github.com/gfm/#example-553
-    test_identical_markdown_events!(r##"[bar][foo\!]
+    test_identical_markdown_events!(
+        r##"[bar][foo\!]
 
-[foo!]: /url"##);
+[foo!]: /url"##
+    );
 }
 
 #[test]
 fn gfm_markdown_links_554() {
     // https://github.github.com/gfm/#example-554
-    test_identical_markdown_events!(r##"[foo][ref[]
+    test_identical_markdown_events!(
+        r##"[foo][ref[]
 
-[ref[]: /uri"##);
+[ref[]: /uri"##
+    );
 }
 
 #[test]
 fn gfm_markdown_links_555() {
     // https://github.github.com/gfm/#example-555
-    test_identical_markdown_events!(r##"[foo][ref[bar]]
+    test_identical_markdown_events!(
+        r##"[foo][ref[bar]]
 
-[ref[bar]]: /uri"##);
+[ref[bar]]: /uri"##
+    );
 }
 
 #[test]
 fn gfm_markdown_links_556() {
     // https://github.github.com/gfm/#example-556
-    test_identical_markdown_events!(r##"[[[foo]]]
+    test_identical_markdown_events!(
+        r##"[[[foo]]]
 
-[[[foo]]]: /url"##);
+[[[foo]]]: /url"##
+    );
 }
 
 #[test]
 fn gfm_markdown_links_557() {
     // https://github.github.com/gfm/#example-557
-    test_identical_markdown_events!(r##"[foo][ref\[]
+    test_identical_markdown_events!(
+        r##"[foo][ref\[]
 
-[ref\[]: /uri"##);
+[ref\[]: /uri"##
+    );
 }
 
 #[test]
 fn gfm_markdown_links_558() {
     // https://github.github.com/gfm/#example-558
-    test_identical_markdown_events!(r##"[bar\\]: /uri
+    test_identical_markdown_events!(
+        r##"[bar\\]: /uri
 
-[bar\\]"##);
+[bar\\]"##
+    );
 }
 
 #[test]
 fn gfm_markdown_links_559() {
     // https://github.github.com/gfm/#example-559
-    test_identical_markdown_events!(r##"[]
+    test_identical_markdown_events!(
+        r##"[]
 
-[]: /uri"##);
+[]: /uri"##
+    );
 }
 
 #[test]
 fn gfm_markdown_links_560() {
     // https://github.github.com/gfm/#example-560
-    test_identical_markdown_events!(r##"[
+    test_identical_markdown_events!(
+        r##"[
  ]
 
 [
- ]: /uri"##,r##"[
+ ]: /uri"##,
+        r##"[
 ]
 
 [
-]: /uri"##);
+]: /uri"##
+    );
 }
 
 #[test]
 fn gfm_markdown_links_561() {
     // https://github.github.com/gfm/#example-561
-    test_identical_markdown_events!(r##"[foo][]
+    test_identical_markdown_events!(
+        r##"[foo][]
 
-[foo]: /url "title""##);
+[foo]: /url "title""##
+    );
 }
 
 #[test]
 fn gfm_markdown_links_562() {
     // https://github.github.com/gfm/#example-562
-    test_identical_markdown_events!(r##"[*foo* bar][]
+    test_identical_markdown_events!(
+        r##"[*foo* bar][]
 
-[*foo* bar]: /url "title""##);
+[*foo* bar]: /url "title""##
+    );
 }
 
 #[test]
 fn gfm_markdown_links_563() {
     // https://github.github.com/gfm/#example-563
-    test_identical_markdown_events!(r##"[Foo][]
+    test_identical_markdown_events!(
+        r##"[Foo][]
 
-[foo]: /url "title""##);
+[foo]: /url "title""##
+    );
 }
 
 #[test]
@@ -4489,124 +5234,154 @@ fn gfm_markdown_links_564() {
 #[test]
 fn gfm_markdown_links_565() {
     // https://github.github.com/gfm/#example-565
-    test_identical_markdown_events!(r##"[foo]
+    test_identical_markdown_events!(
+        r##"[foo]
 
-[foo]: /url "title""##);
+[foo]: /url "title""##
+    );
 }
 
 #[test]
 fn gfm_markdown_links_566() {
     // https://github.github.com/gfm/#example-566
-    test_identical_markdown_events!(r##"[*foo* bar]
+    test_identical_markdown_events!(
+        r##"[*foo* bar]
 
-[*foo* bar]: /url "title""##);
+[*foo* bar]: /url "title""##
+    );
 }
 
 #[test]
 fn gfm_markdown_links_567() {
     // https://github.github.com/gfm/#example-567
-    test_identical_markdown_events!(r##"[[*foo* bar]]
+    test_identical_markdown_events!(
+        r##"[[*foo* bar]]
 
-[*foo* bar]: /url "title""##);
+[*foo* bar]: /url "title""##
+    );
 }
 
 #[test]
 fn gfm_markdown_links_568() {
     // https://github.github.com/gfm/#example-568
-    test_identical_markdown_events!(r##"[[bar [foo]
+    test_identical_markdown_events!(
+        r##"[[bar [foo]
 
-[foo]: /url"##);
+[foo]: /url"##
+    );
 }
 
 #[test]
 fn gfm_markdown_links_569() {
     // https://github.github.com/gfm/#example-569
-    test_identical_markdown_events!(r##"[Foo]
+    test_identical_markdown_events!(
+        r##"[Foo]
 
-[foo]: /url "title""##);
+[foo]: /url "title""##
+    );
 }
 
 #[test]
 fn gfm_markdown_links_570() {
     // https://github.github.com/gfm/#example-570
-    test_identical_markdown_events!(r##"[foo] bar
+    test_identical_markdown_events!(
+        r##"[foo] bar
 
-[foo]: /url"##);
+[foo]: /url"##
+    );
 }
 
 #[test]
 fn gfm_markdown_links_571() {
     // https://github.github.com/gfm/#example-571
-    test_identical_markdown_events!(r##"\[foo]
+    test_identical_markdown_events!(
+        r##"\[foo]
 
-[foo]: /url "title""##);
+[foo]: /url "title""##
+    );
 }
 
 #[test]
 fn gfm_markdown_links_572() {
     // https://github.github.com/gfm/#example-572
-    test_identical_markdown_events!(r##"[foo*]: /url
+    test_identical_markdown_events!(
+        r##"[foo*]: /url
 
-*[foo*]"##);
+*[foo*]"##
+    );
 }
 
 #[test]
 fn gfm_markdown_links_573() {
     // https://github.github.com/gfm/#example-573
-    test_identical_markdown_events!(r##"[foo][bar]
+    test_identical_markdown_events!(
+        r##"[foo][bar]
 
 [foo]: /url1
-[bar]: /url2"##);
+[bar]: /url2"##
+    );
 }
 
 #[test]
 fn gfm_markdown_links_574() {
     // https://github.github.com/gfm/#example-574
-    test_identical_markdown_events!(r##"[foo][]
+    test_identical_markdown_events!(
+        r##"[foo][]
 
-[foo]: /url1"##);
+[foo]: /url1"##
+    );
 }
 
 #[test]
 fn gfm_markdown_links_575() {
     // https://github.github.com/gfm/#example-575
-    test_identical_markdown_events!(r##"[foo]()
+    test_identical_markdown_events!(
+        r##"[foo]()
 
-[foo]: /url1"##);
+[foo]: /url1"##
+    );
 }
 
 #[test]
 fn gfm_markdown_links_576() {
     // https://github.github.com/gfm/#example-576
-    test_identical_markdown_events!(r##"[foo](not a link)
+    test_identical_markdown_events!(
+        r##"[foo](not a link)
 
-[foo]: /url1"##);
+[foo]: /url1"##
+    );
 }
 
 #[test]
 fn gfm_markdown_links_577() {
     // https://github.github.com/gfm/#example-577
-    test_identical_markdown_events!(r##"[foo][bar][baz]
+    test_identical_markdown_events!(
+        r##"[foo][bar][baz]
 
-[baz]: /url"##);
+[baz]: /url"##
+    );
 }
 
 #[test]
 fn gfm_markdown_links_578() {
     // https://github.github.com/gfm/#example-578
-    test_identical_markdown_events!(r##"[foo][bar][baz]
+    test_identical_markdown_events!(
+        r##"[foo][bar][baz]
 
 [baz]: /url1
-[bar]: /url2"##);
+[bar]: /url2"##
+    );
 }
 
 #[test]
 fn gfm_markdown_links_579() {
     // https://github.github.com/gfm/#example-579
-    test_identical_markdown_events!(r##"[foo][bar][baz]
+    test_identical_markdown_events!(
+        r##"[foo][bar][baz]
 
 [baz]: /url1
-[foo]: /url2"##);
+[foo]: /url2"##
+    );
 }
 
 #[test]
@@ -4618,9 +5393,11 @@ fn gfm_markdown_images_580() {
 #[test]
 fn gfm_markdown_images_581() {
     // https://github.github.com/gfm/#example-581
-    test_identical_markdown_events!(r##"![foo *bar*]
+    test_identical_markdown_events!(
+        r##"![foo *bar*]
 
-[foo *bar*]: train.jpg "train & tracks""##);
+[foo *bar*]: train.jpg "train & tracks""##
+    );
 }
 
 #[test]
@@ -4638,17 +5415,21 @@ fn gfm_markdown_images_583() {
 #[test]
 fn gfm_markdown_images_584() {
     // https://github.github.com/gfm/#example-584
-    test_identical_markdown_events!(r##"![foo *bar*][]
+    test_identical_markdown_events!(
+        r##"![foo *bar*][]
 
-[foo *bar*]: train.jpg "train & tracks""##);
+[foo *bar*]: train.jpg "train & tracks""##
+    );
 }
 
 #[test]
 fn gfm_markdown_images_585() {
     // https://github.github.com/gfm/#example-585
-    test_identical_markdown_events!(r##"![foo *bar*][foobar]
+    test_identical_markdown_events!(
+        r##"![foo *bar*][foobar]
 
-[FOOBAR]: train.jpg "train & tracks""##);
+[FOOBAR]: train.jpg "train & tracks""##
+    );
 }
 
 #[test]
@@ -4660,13 +5441,16 @@ fn gfm_markdown_images_586() {
 #[test]
 fn gfm_markdown_images_587() {
     // https://github.github.com/gfm/#example-587
-    test_identical_markdown_events!(r##"My ![foo bar](/path/to/train.jpg  "title"   )"##,r##"My ![foo bar](/path/to/train.jpg "title")"##);
+    test_identical_markdown_events!(
+        r##"My ![foo bar](/path/to/train.jpg  "title"   )"##,
+        r##"My ![foo bar](/path/to/train.jpg "title")"##
+    );
 }
 
 #[test]
 fn gfm_markdown_images_588() {
     // https://github.github.com/gfm/#example-588
-    test_identical_markdown_events!(r##"![foo](<url>)"##,r##"![foo](url)"##);
+    test_identical_markdown_events!(r##"![foo](<url>)"##, r##"![foo](url)"##);
 }
 
 #[test]
@@ -4678,41 +5462,51 @@ fn gfm_markdown_images_589() {
 #[test]
 fn gfm_markdown_images_590() {
     // https://github.github.com/gfm/#example-590
-    test_identical_markdown_events!(r##"![foo][bar]
+    test_identical_markdown_events!(
+        r##"![foo][bar]
 
-[bar]: /url"##);
+[bar]: /url"##
+    );
 }
 
 #[test]
 fn gfm_markdown_images_591() {
     // https://github.github.com/gfm/#example-591
-    test_identical_markdown_events!(r##"![foo][bar]
+    test_identical_markdown_events!(
+        r##"![foo][bar]
 
-[BAR]: /url"##);
+[BAR]: /url"##
+    );
 }
 
 #[test]
 fn gfm_markdown_images_592() {
     // https://github.github.com/gfm/#example-592
-    test_identical_markdown_events!(r##"![foo][]
+    test_identical_markdown_events!(
+        r##"![foo][]
 
-[foo]: /url "title""##);
+[foo]: /url "title""##
+    );
 }
 
 #[test]
 fn gfm_markdown_images_593() {
     // https://github.github.com/gfm/#example-593
-    test_identical_markdown_events!(r##"![*foo* bar][]
+    test_identical_markdown_events!(
+        r##"![*foo* bar][]
 
-[*foo* bar]: /url "title""##);
+[*foo* bar]: /url "title""##
+    );
 }
 
 #[test]
 fn gfm_markdown_images_594() {
     // https://github.github.com/gfm/#example-594
-    test_identical_markdown_events!(r##"![Foo][]
+    test_identical_markdown_events!(
+        r##"![Foo][]
 
-[foo]: /url "title""##);
+[foo]: /url "title""##
+    );
 }
 
 #[test]
@@ -4725,49 +5519,61 @@ fn gfm_markdown_images_595() {
 #[test]
 fn gfm_markdown_images_596() {
     // https://github.github.com/gfm/#example-596
-    test_identical_markdown_events!(r##"![foo]
+    test_identical_markdown_events!(
+        r##"![foo]
 
-[foo]: /url "title""##);
+[foo]: /url "title""##
+    );
 }
 
 #[test]
 fn gfm_markdown_images_597() {
     // https://github.github.com/gfm/#example-597
-    test_identical_markdown_events!(r##"![*foo* bar]
+    test_identical_markdown_events!(
+        r##"![*foo* bar]
 
-[*foo* bar]: /url "title""##);
+[*foo* bar]: /url "title""##
+    );
 }
 
 #[test]
 fn gfm_markdown_images_598() {
     // https://github.github.com/gfm/#example-598
-    test_identical_markdown_events!(r##"![[foo]]
+    test_identical_markdown_events!(
+        r##"![[foo]]
 
-[[foo]]: /url "title""##);
+[[foo]]: /url "title""##
+    );
 }
 
 #[test]
 fn gfm_markdown_images_599() {
     // https://github.github.com/gfm/#example-599
-    test_identical_markdown_events!(r##"![Foo]
+    test_identical_markdown_events!(
+        r##"![Foo]
 
-[foo]: /url "title""##);
+[foo]: /url "title""##
+    );
 }
 
 #[test]
 fn gfm_markdown_images_600() {
     // https://github.github.com/gfm/#example-600
-    test_identical_markdown_events!(r##"!\[foo]
+    test_identical_markdown_events!(
+        r##"!\[foo]
 
-[foo]: /url "title""##);
+[foo]: /url "title""##
+    );
 }
 
 #[test]
 fn gfm_markdown_images_601() {
     // https://github.github.com/gfm/#example-601
-    test_identical_markdown_events!(r##"\![foo]
+    test_identical_markdown_events!(
+        r##"\![foo]
 
-[foo]: /url "title""##);
+[foo]: /url "title""##
+    );
 }
 
 #[test]
@@ -4899,21 +5705,25 @@ fn gfm_markdown_autolinks_extension_622() {
 #[test]
 fn gfm_markdown_autolinks_extension_623() {
     // https://github.github.com/gfm/#example-623
-    test_identical_markdown_events!(r##"Visit www.commonmark.org.
+    test_identical_markdown_events!(
+        r##"Visit www.commonmark.org.
 
-Visit www.commonmark.org/a.b."##);
+Visit www.commonmark.org/a.b."##
+    );
 }
 
 #[test]
 fn gfm_markdown_autolinks_extension_624() {
     // https://github.github.com/gfm/#example-624
-    test_identical_markdown_events!(r##"www.google.com/search?q=Markup+(business)
+    test_identical_markdown_events!(
+        r##"www.google.com/search?q=Markup+(business)
 
 www.google.com/search?q=Markup+(business)))
 
 (www.google.com/search?q=Markup+(business))
 
-(www.google.com/search?q=Markup+(business)"##);
+(www.google.com/search?q=Markup+(business)"##
+    );
 }
 
 #[test]
@@ -4925,9 +5735,11 @@ fn gfm_markdown_autolinks_extension_625() {
 #[test]
 fn gfm_markdown_autolinks_extension_626() {
     // https://github.github.com/gfm/#example-626
-    test_identical_markdown_events!(r##"www.google.com/search?q=commonmark&hl=en
+    test_identical_markdown_events!(
+        r##"www.google.com/search?q=commonmark&hl=en
 
-www.google.com/search?q=commonmark&hl;"##);
+www.google.com/search?q=commonmark&hl;"##
+    );
 }
 
 #[test]
@@ -4939,11 +5751,13 @@ fn gfm_markdown_autolinks_extension_627() {
 #[test]
 fn gfm_markdown_autolinks_extension_628() {
     // https://github.github.com/gfm/#example-628
-    test_identical_markdown_events!(r##"http://commonmark.org
+    test_identical_markdown_events!(
+        r##"http://commonmark.org
 
 (Visit https://encrypted.google.com/search?q=Markup+(business))
 
-Anonymous FTP is available at ftp://foo.bar.baz."##);
+Anonymous FTP is available at ftp://foo.bar.baz."##
+    );
 }
 
 #[test]
@@ -4955,19 +5769,23 @@ fn gfm_markdown_autolinks_extension_629() {
 #[test]
 fn gfm_markdown_autolinks_extension_630() {
     // https://github.github.com/gfm/#example-630
-    test_identical_markdown_events!(r##"hello@mail+xyz.example isn't valid, but hello+xyz@mail.example is."##);
+    test_identical_markdown_events!(
+        r##"hello@mail+xyz.example isn't valid, but hello+xyz@mail.example is."##
+    );
 }
 
 #[test]
 fn gfm_markdown_autolinks_extension_631() {
     // https://github.github.com/gfm/#example-631
-    test_identical_markdown_events!(r##"a.b-c_d@a.b
+    test_identical_markdown_events!(
+        r##"a.b-c_d@a.b
 
 a.b-c_d@a.b.
 
 a.b-c_d@a.b-
 
-a.b-c_d@a.b_"##);
+a.b-c_d@a.b_"##
+    );
 }
 
 #[test]
@@ -4985,15 +5803,19 @@ fn gfm_markdown_raw_html_633() {
 #[test]
 fn gfm_markdown_raw_html_634() {
     // https://github.github.com/gfm/#example-634
-    test_identical_markdown_events!(r##"<a  /><b2
-data="foo" >"##);
+    test_identical_markdown_events!(
+        r##"<a  /><b2
+data="foo" >"##
+    );
 }
 
 #[test]
 fn gfm_markdown_raw_html_635() {
     // https://github.github.com/gfm/#example-635
-    test_identical_markdown_events!(r##"<a foo="bar" bam = 'baz <em>"</em>'
-_boolean zoop:33=zoop:33 />"##);
+    test_identical_markdown_events!(
+        r##"<a foo="bar" bam = 'baz <em>"</em>'
+_boolean zoop:33=zoop:33 />"##
+    );
 }
 
 #[test]
@@ -5023,10 +5845,12 @@ fn gfm_markdown_raw_html_639() {
 #[test]
 fn gfm_markdown_raw_html_640() {
     // https://github.github.com/gfm/#example-640
-    test_identical_markdown_events!(r##"< a><
+    test_identical_markdown_events!(
+        r##"< a><
 foo><bar/ >
 <foo bar=baz
-bim!bop />"##);
+bim!bop />"##
+    );
 }
 
 #[test]
@@ -5050,16 +5874,20 @@ fn gfm_markdown_raw_html_643() {
 #[test]
 fn gfm_markdown_raw_html_644() {
     // https://github.github.com/gfm/#example-644
-    test_identical_markdown_events!(r##"foo <!-- this is a --
-comment - with hyphens -->"##);
+    test_identical_markdown_events!(
+        r##"foo <!-- this is a --
+comment - with hyphens -->"##
+    );
 }
 
 #[test]
 fn gfm_markdown_raw_html_645() {
     // https://github.github.com/gfm/#example-645
-    test_identical_markdown_events!(r##"foo <!--> foo -->
+    test_identical_markdown_events!(
+        r##"foo <!--> foo -->
 
-foo <!---> foo -->"##);
+foo <!---> foo -->"##
+    );
 }
 
 #[test]
@@ -5102,11 +5930,13 @@ fn gfm_markdown_raw_html_651() {
 #[ignore]
 fn gfm_markdown_disallowed_raw_html_extension_652() {
     // https://github.github.com/gfm/#example-652
-    test_identical_markdown_events!(r##"<strong> <title> <style> <em>
+    test_identical_markdown_events!(
+        r##"<strong> <title> <style> <em>
 
 <blockquote>
   <xmp> is disallowed.  <XMP> is also disallowed.
-</blockquote>"##);
+</blockquote>"##
+    );
 }
 
 #[test]
@@ -5118,8 +5948,10 @@ fn gfm_markdown_hard_line_breaks_653() {
 #[test]
 fn gfm_markdown_hard_line_breaks_654() {
     // https://github.github.com/gfm/#example-654
-    test_identical_markdown_events!(r##"foo\
-baz"##);
+    test_identical_markdown_events!(
+        r##"foo\
+baz"##
+    );
 }
 
 #[test]
@@ -5131,15 +5963,18 @@ fn gfm_markdown_hard_line_breaks_655() {
 #[test]
 fn gfm_markdown_hard_line_breaks_656() {
     // https://github.github.com/gfm/#example-656
-    test_identical_markdown_events!("foo  \n     bar","foo  \nbar");
+    test_identical_markdown_events!("foo  \n     bar", "foo  \nbar");
 }
 
 #[test]
 fn gfm_markdown_hard_line_breaks_657() {
     // https://github.github.com/gfm/#example-657
-    test_identical_markdown_events!(r##"foo\
-     bar"##,r##"foo\
-bar"##);
+    test_identical_markdown_events!(
+        r##"foo\
+     bar"##,
+        r##"foo\
+bar"##
+    );
 }
 
 #[test]
@@ -5151,8 +5986,10 @@ fn gfm_markdown_hard_line_breaks_658() {
 #[test]
 fn gfm_markdown_hard_line_breaks_659() {
     // https://github.github.com/gfm/#example-659
-    test_identical_markdown_events!(r##"*foo\
-bar*"##);
+    test_identical_markdown_events!(
+        r##"*foo\
+bar*"##
+    );
 }
 
 #[test]
@@ -5164,8 +6001,10 @@ fn gfm_markdown_hard_line_breaks_660() {
 #[test]
 fn gfm_markdown_hard_line_breaks_661() {
     // https://github.github.com/gfm/#example-661
-    test_identical_markdown_events!(r##"`code\
-span`"##);
+    test_identical_markdown_events!(
+        r##"`code\
+span`"##
+    );
 }
 
 #[test]
@@ -5177,8 +6016,10 @@ fn gfm_markdown_hard_line_breaks_662() {
 #[test]
 fn gfm_markdown_hard_line_breaks_663() {
     // https://github.github.com/gfm/#example-663
-    test_identical_markdown_events!(r##"<a href="foo\
-bar">"##);
+    test_identical_markdown_events!(
+        r##"<a href="foo\
+bar">"##
+    );
 }
 
 #[test]
@@ -5190,7 +6031,7 @@ fn gfm_markdown_hard_line_breaks_664() {
 #[test]
 fn gfm_markdown_hard_line_breaks_665() {
     // https://github.github.com/gfm/#example-665
-    test_identical_markdown_events!("foo  ",r##"foo"##);
+    test_identical_markdown_events!("foo  ", r##"foo"##);
 }
 
 #[test]
@@ -5202,21 +6043,23 @@ fn gfm_markdown_hard_line_breaks_666() {
 #[test]
 fn gfm_markdown_hard_line_breaks_667() {
     // https://github.github.com/gfm/#example-667
-    test_identical_markdown_events!("### foo  ",r##"### foo"##);
+    test_identical_markdown_events!("### foo  ", r##"### foo"##);
 }
 
 #[test]
 fn gfm_markdown_soft_line_breaks_668() {
     // https://github.github.com/gfm/#example-668
-    test_identical_markdown_events!(r##"foo
-baz"##);
+    test_identical_markdown_events!(
+        r##"foo
+baz"##
+    );
 }
 
 #[test]
 #[ignore]
 fn gfm_markdown_soft_line_breaks_669() {
     // https://github.github.com/gfm/#example-669
-    test_identical_markdown_events!("foo \n baz","foo \nbaz");
+    test_identical_markdown_events!("foo \n baz", "foo \nbaz");
 }
 
 #[test]

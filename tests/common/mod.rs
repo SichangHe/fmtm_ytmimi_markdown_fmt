@@ -1,4 +1,6 @@
-/// Collection of common functions / macros used for generating tests
+#![allow(missing_docs)]
+
+//! Collection of common functions / macros used for generating tests.
 
 #[allow(dead_code)]
 pub fn check_formatted_markdown<'a>(

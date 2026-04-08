@@ -1,3 +1,5 @@
+#![allow(missing_docs)]
+
 // @generated
 // generated running `cargo build -F gen-tests`
 // test macros are defined in tests/common/mod.rs
@@ -1237,10 +1239,7 @@ bbb"##
 #[test]
 fn markdown_fenced_code_blocks_129() {
     // https://spec.commonmark.org/0.30/#example-129
-    test_identical_markdown_events!(
-        "```\n\n  \n```",
-        "```\n\n\n```"
-    );
+    test_identical_markdown_events!("```\n\n  \n```", "```\n\n\n```");
 }
 
 #[test]
@@ -3502,7 +3501,8 @@ fn markdown_lists_318() {
 
 
   ```
-- c"##);
+- c"##
+    );
 }
 
 #[test]
