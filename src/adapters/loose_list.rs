@@ -435,7 +435,7 @@ mod test {
                     output.push(format!("event={event:?} range={range:?}").into())
                 }
                 output.push("".into());
-                std::fs::write(file, &output.join("\n")).unwrap();
+                std::fs::write(file, output.join("\n")).unwrap();
             } else {
                 for ((event, range), line) in events.zip(expected_events.trim().lines()) {
                     assert_eq!(format!("event={event:?} range={range:?}"), line);
