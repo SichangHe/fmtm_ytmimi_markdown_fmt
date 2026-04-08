@@ -106,7 +106,7 @@ fn reformat_display_math_in_list() {
 fn reformat_long_inline_code_in_list_is_idempotent() {
     init_tracing();
     let input = r##"<!-- : max_width: 32 -->
-- `having a very very very very very very very long piece of inline code text that is longer than the max width`
+- `having a very long piece of inline code text that is longer than the max width`
 "##;
     let formatted = assert_idempotent_with_leading_config_comments(input);
     assert!(
