@@ -58,10 +58,7 @@ where
                         self.trim_link_or_image_start = false
                     }
 
-                    if matches!(
-                        self.peek(),
-                        Some(Event::End(TagEnd::Link { .. } | TagEnd::Image { .. }))
-                    ) {
+                    if matches!(self.peek(), Some(Event::End(TagEnd::Link | TagEnd::Image))) {
                         text = text.trim_end();
                     }
 
@@ -87,16 +84,24 @@ where
                 self.write_indentation_if_needed()?;
                 self.write_str("$$")?;
             }
-            Event::Code(_) | Event::Html(_) => {
+            Event::Code(ref parsed_text) => {
+                let source = &self.input[range];
+                let normalize_wrapped_code_span =
+                    self.config.max_width.is_some() && source.contains('\n');
+                if parsed_text.is_empty() || !normalize_wrapped_code_span {
+                    write!(self, "{source}")?;
+                } else {
+                    rewrite_code_span(parsed_text.as_ref(), self)?;
+                }
+            }
+            Event::Html(_) => {
                 write!(self, "{}", &self.input[range])?;
             }
             Event::SoftBreak => {
                 last_position = range.end;
                 if self.in_link_or_image() {
-                    let next_is_end = matches!(
-                        self.peek(),
-                        Some(Event::End(TagEnd::Link { .. } | TagEnd::Image { .. }))
-                    );
+                    let next_is_end =
+                        matches!(self.peek(), Some(Event::End(TagEnd::Link | TagEnd::Image)));
                     if self.trim_link_or_image_start || next_is_end {
                         self.trim_link_or_image_start = false
                     } else {
@@ -127,7 +132,7 @@ where
             Event::Rule => {
                 let newlines = self.count_newlines(&range);
                 self.write_newlines(newlines)?;
-                write!(self, "{}", &self.input[range])?;
+                write!(self, "{}", self.input[range].trim_end_matches('\n'))?;
                 self.check_needs_indent(&event)
             }
             Event::FootnoteReference(text) => {
@@ -171,7 +176,7 @@ where
                 if full_header.contains('\n') && full_header.ends_with(['=', '-']) {
                     // support for alternative syntax for H1 and H2
                     // <https://www.markdownguide.org/basic-syntax/#alternate-syntax>
-                    let header_marker = full_header.split('\n').last().unwrap().trim();
+                    let header_marker = full_header.split('\n').next_back().unwrap().trim();
                     self.setext_header.replace(header_marker);
                     // setext header are handled in `end_tag`
                     return Ok(());
@@ -256,12 +261,10 @@ where
                                 write!(self, ">")?;
                             }
                             self.write_newlines(newlines)?;
+                        } else if let Some(marker) = alert_marker {
+                            write!(self, "> [!{marker}]\\")?;
                         } else {
-                            if let Some(marker) = alert_marker {
-                                write!(self, "> [!{marker}]\\")?;
-                            } else {
-                                write!(self, "> ")?;
-                            }
+                            write!(self, "> ")?;
                         }
                     }
                     None => {

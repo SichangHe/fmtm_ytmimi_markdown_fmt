@@ -17,7 +17,7 @@ where
     }
 
     /// Peek at the next Markdown Event and it's original position in the input
-    pub(crate) fn peek_with_range(&mut self) -> Option<(&Event, &Range<usize>)> {
+    pub(crate) fn peek_with_range(&mut self) -> Option<(&Event<'_>, &Range<usize>)> {
         self.events.peek().map(|(e, r)| (e, r))
     }
 
@@ -501,6 +501,31 @@ pub(crate) fn rewrite_marker<W: std::fmt::Write>(
     writer: &mut W,
 ) -> std::fmt::Result {
     rewrite_marker_with_limit(input, range, writer, None)
+}
+
+pub(crate) fn rewrite_code_span<W: std::fmt::Write>(
+    text: &str,
+    writer: &mut W,
+) -> std::fmt::Result {
+    let delimiter_len = text
+        .chars()
+        .fold((0, 0), |(max_len, run_len), c| {
+            if c == '`' {
+                let run_len = run_len + 1;
+                (max_len.max(run_len), run_len)
+            } else {
+                (max_len, 0)
+            }
+        })
+        .0
+        + 1;
+    let delimiter = "`".repeat(delimiter_len);
+    let needs_padding = text.starts_with(['`', ' ']) || text.ends_with(['`', ' ']);
+    if needs_padding {
+        write!(writer, "{delimiter} {text} {delimiter}")
+    } else {
+        write!(writer, "{delimiter}{text}{delimiter}")
+    }
 }
 
 /// Rewrite a list of h1, h2, h3, h4, h5, h6 classes

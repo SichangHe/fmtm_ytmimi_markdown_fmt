@@ -1,9 +1,11 @@
+#![allow(missing_docs)]
+
 use std::{
     fs,
     path::{Path, PathBuf},
 };
 
-use insta::{assert_snapshot, glob, Settings};
+use insta::{Settings, assert_snapshot, glob};
 use rust_search::SearchBuilder;
 
 use super::*;
@@ -39,6 +41,17 @@ fn init_tracing() {
         .with_env_filter(tracing_subscriber::EnvFilter::from_default_env())
         .with_ansi(true)
         .try_init();
+}
+
+fn assert_idempotent_with_leading_config_comments(input: &str) -> String {
+    let formatted = MarkdownFormatter::from_leading_config_comments(input)
+        .format(input)
+        .unwrap();
+    let reformatted = MarkdownFormatter::from_leading_config_comments(&formatted)
+        .format(&formatted)
+        .unwrap();
+    assert_eq!(reformatted, formatted);
+    formatted
 }
 
 #[test]
@@ -87,6 +100,49 @@ fn reformat_display_math_in_list() {
     formatter.sichanghe_config();
     let rewrite = formatter.format(input).unwrap();
     assert_snapshot!(rewrite)
+}
+
+#[test]
+fn reformat_long_inline_code_in_list_is_idempotent() {
+    init_tracing();
+    let input = r##"<!-- : max_width: 32 -->
+- `having a very very very very very very very long piece of inline code text that is longer than the max width`
+"##;
+    let formatted = assert_idempotent_with_leading_config_comments(input);
+    assert!(
+        formatted
+            .lines()
+            .skip(1)
+            .any(|line| line.starts_with("    "))
+    );
+}
+
+#[test]
+fn reformat_thematic_break_followed_by_html_comment_is_idempotent() {
+    init_tracing();
+    let input = r##"something
+
+---
+
+<!-- comment that gets more blank lines before every time it gets formatted -->
+"##;
+    let formatted = assert_idempotent_with_leading_config_comments(input);
+    assert_eq!(formatted, input);
+}
+
+#[test]
+fn reformat_thematic_break_followed_by_html_block_is_idempotent() {
+    init_tracing();
+    let input = r##"something
+
+---
+
+<div>
+block html under a separator
+</div>
+"##;
+    let formatted = assert_idempotent_with_leading_config_comments(input);
+    assert_eq!(formatted, input);
 }
 
 pub(crate) fn get_test_files<P: AsRef<Path>>(
