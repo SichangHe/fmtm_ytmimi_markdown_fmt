@@ -2,6 +2,24 @@
 
 ## [Unreleased]
 
+## [0.0.4](https://github.com/SichangHe/fmtm_ytmimi_markdown_fmt/compare/v0.0.3...v0.0.4) - 2026-04-08
+
+### Fixed
+
+- *(test)* make clippy happy about line width
+- *(ci)* bump sccache to avoid failure
+- keep wrapped inline code and separators idempotent
+- guard newline counting against reversed ranges
+- preserve GFM alert markers in blockquotes
+- keep nested paragraph softbreak indentation idempotent
+
+### Other
+
+- fix loose list test clippy warning
+- allow missing docs in generated spec crates
+- how GFM alerts should be handled
+- non-idempotent if item body contain inline code
+
 ## [0.0.3](https://github.com/SichangHe/fmtm_ytmimi_markdown_fmt/compare/v0.0.2...v0.0.3) - 2024-05-29
 
 ### Added
